@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:homlisellerapp/app/shared/color.dart';
+
 class Utility {
   static bool isNullEmptyOrFalse(Object? o) {
     return o == null ||
@@ -12,5 +16,16 @@ class Utility {
 
   static bool isNotNullEmptyOrFalse(Object? o) {
     return !isNullEmptyOrFalse(o);
+  }
+
+  void myfluttertoast(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.deepPurpleAccent,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 }

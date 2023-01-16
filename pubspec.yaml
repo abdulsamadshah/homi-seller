@@ -44,10 +44,15 @@ dependencies:
   text_scroll: ^0.1.1
   flutter_launcher_icons: ^0.11.0
   dio: ^4.0.6
-  shared_preferences: ^0.5.5
+  shared_preferences: ^2.0.16
   image_picker: ^0.8.5+3
   image_cropper: ^3.0.0
   file_picker: ^5.2.0
+  fluttertoast: ^8.1.2
+  sms_autofill: ^2.2.0
+  email_validator: '^2.1.16'
+
+
 
 
 dev_dependencies:
@@ -83,18 +88,27 @@ flutter:
     - assets/images/png/
 
   fonts:
-    - family: Poppins
+    - family: Poppinsbold
       fonts:
         - asset: assets/fonts/Poppins-Bold.ttf
-          weight: 700
+
+    - family: PoppinsMedium
+      fonts:
         - asset: assets/fonts/Poppins-Medium.ttf
-          weight: 500
+
+    - family: PoppinsRegular
+      fonts:
         - asset: assets/fonts/Poppins-Regular.ttf
-          weight: 400
+
+    - family: PoppinsSemibold
+      fonts:
         - asset: assets/fonts/Poppins-SemiBold.ttf
-          weight: 600
+
+    - family: PoppinsLight
+      fonts:
         - asset: assets/fonts/Poppins-Light.ttf
-          weight: 300
+
+
       
     - family: din
       fonts:

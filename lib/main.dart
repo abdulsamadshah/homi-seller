@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:homlisellerapp/app/routes/RoutesName.dart';
 
 import 'package:homlisellerapp/app/shared/color.dart';
 
-import 'app/routes/app_pages.dart';
+import 'app/routes/Routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,8 +15,9 @@ void main() {
         
         debugShowCheckedModeBanner: false,
         title: "homlisellerapp",
-        initialRoute: AppPages.INITIAL,
-        getPages: AppPages.routes,
+        initialRoute: RoutesName.REGISTRATION,
+        onGenerateRoute: Routes.getroutes,
+
         
 
         theme: ThemeData(
@@ -53,5 +55,6 @@ void main() {
                         MaterialStateProperty.all<Color>(Colors.white),
                     shadowColor:
                         MaterialStateProperty.all<Color>(Colors.blue))))),
+
   );
 }
