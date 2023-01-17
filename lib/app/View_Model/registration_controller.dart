@@ -70,7 +70,7 @@ class RegistrationController extends GetxController {
 
   Future<void> sendmobileotp(BuildContext context, dynamic data) async {
     repo.Sendotprepo(data).then((value) {
-      Utility().myfluttertoast("Mobile Veriefy Successfully");
+      Utility().myfluttertoast("Send Otp Successfully");
 
       //he is read to single response
       print("MObile Otp Message:" + value['msg']);
@@ -86,9 +86,10 @@ class RegistrationController extends GetxController {
     });
   }
 
+
   Future<void> sendemailOtp(BuildContext context, dynamic data) async {
     repo.Sendotprepo(data).then((value) {
-      Utility().myfluttertoast("Email Veriefy Successfully");
+      Utility().myfluttertoast("Send Otp Successfully");
       print("Email Otp Message:" + value['msg']);
       print(value['email_otp'].toString());
       print(value['id'].toString());
@@ -100,30 +101,40 @@ class RegistrationController extends GetxController {
     });
   }
 
-  Future<void> Register(BuildContext context, dynamic data) async {
+  Future<void> Register(BuildContext context, dynamic data,
+      String inputmobileot, String inputemailotp) async {
     await repo.Registerationrep(data).then((value) {
       print(value['msg']);
 
       print(value['data']['email_verify']);
       print(value['data']['phone_verify']);
-      print(value['status']);
-
-
+      print("Server Phone Otp" + value['data']['phone_otp']);
+      print("Server Email Otp" + value['data']['email_otp']);
+      print(value['statuss']);
 
       if (value['status'] == "true") {
         if (value['data']['email_verify'] == "yes" ||
             value['data']['phone_verify'] == "yes") {
-          print("this working right");
-          Utility().myfluttertoast(value['msg'].toString());
-          Navigator.pushNamed(context, RoutesName.HOME);
+          if (inputmobileot == value['data']['phone_otp'] &&
+              inputemailotp == value['data']['email_otp']) {
+            print(value['msg'].toString());
+            Utility().myfluttertoast("Register Successfully");
+            Navigator.pushNamed(context, RoutesName.PersonalDetails);
+          } else {
+            Utility().myfluttertoast("Please Enter The Correct Otp");
+          }
         } else if (value['data']['email_verify'] == "no" ||
             value['data']['phone_verify'] == "no") {
           Utility().myfluttertoast("Veriefy the email & phone no");
         }
       } else {
         debugPrint("response wrong");
+        Utility().myfluttertoast("Server Issue");
       }
 
+      // print("this working right");
+      // Utility().myfluttertoast(value['msg'].toString());
+      // Navigator.pushNamed(context, RoutesName.PersonalDetails);
     }).onError((error, stackTrace) {
       Utility().myfluttertoast(error.toString());
       print(error.toString());

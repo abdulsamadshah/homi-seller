@@ -412,7 +412,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
                   onTap: () {
                     Map personaldata = {
                       'gender': gender,
-                      'dob': "12/07/2021",
+                      'dob': "14/07/2021",
                       'pan_no': controller.pancardnumber.text.toString(),
                       'pan_image': pancimage.toString(),
                       'aadhar_no': controller.addharcardnumber.text.toString(),

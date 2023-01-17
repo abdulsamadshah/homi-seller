@@ -19,7 +19,13 @@ class Registerrepo {
     return response;
   }
 
-  Future<dynamic> loginrepo(dynamic data) async {
+  Future<dynamic> loginotp(dynamic data) async {
+    final response =
+        await _baseapiservices.PostapiServices(Apiurl.sellerloginotp, data);
+    return response;
+  }
+
+  Future<dynamic> loginautmains(dynamic data) async {
     final response =
         await _baseapiservices.PostapiServices(Apiurl.Loginurl, data);
     return response;

@@ -29,8 +29,13 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
   final controller = Get.put(RegistrationController());
   bool _visible = false;
   bool _motpvisible = false;
+  bool _mobileresend = false;
+  bool _emailresend = false;
   String codeValue = "";
   String? id, emailotp, mobileotp;
+
+  bool disablesendmobileotpbutton = false;
+  bool disablesendemailpbutton = false;
 
   @override
   void codeUpdated() {
@@ -63,20 +68,22 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
   }
 
   late Timer _timer;
-  int _start = 0;
+  int _start = 30;
+  String? mobileotps, emailotps;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (_start == 30) {
+        if (_start == 0) {
           setState(() {
             timer.cancel();
+            _mobileresend = !_mobileresend;
           });
         } else {
           setState(() {
-            _start++;
+            _start--;
             // _start--;
           });
         }
@@ -85,20 +92,21 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
   }
 
   late Timer _timeremail;
-  int _startemail = 0;
+  int _startemail = 30;
 
   void startTimeremail() {
     const oneSec = const Duration(seconds: 1);
     _timeremail = new Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (_startemail == 30) {
+        if (_startemail == 0) {
           setState(() {
             timer.cancel();
+            _emailresend = !_emailresend;
           });
         } else {
           setState(() {
-            _startemail++;
+            _startemail--;
             // _start--;
           });
         }
@@ -178,82 +186,87 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                           controller: controller.mobile_controller,
                           decoration: InputDecoration(
                             hintText: "Mobile Number",
+                            labelText: "Mobile Number",
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15.0)),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 240, top: 6),
-                          child: InkWell(
-                            onTap: () async {
-                              if (controller.mobile_controller.text
-                                          .toString() ==
-                                      null ||
-                                  controller.mobile_controller.text.isEmpty ||
-                                  controller.mobile_controller.text == "") {
-                                Utility()
-                                    .myfluttertoast("Mobile Number is empty");
-                              } else if (controller
-                                      .mobile_controller.text.length >
-                                  10) {
-                                Utility().myfluttertoast(
-                                    "Please enter the ten digit mobile Number");
-                              } else if (controller
-                                      .mobile_controller.text.length <
-                                  10) {
-                                Utility().myfluttertoast(
-                                    "Please enter the ten digit mobile Number");
-                              } else {
-                                SharedPreferences userpref =
-                                    await SharedPreferences.getInstance();
-                                id = userpref.getString('id') ?? '';
-                                emailotp =
-                                    userpref.getString('email_otp') ?? '';
-                                mobileotp =
-                                    userpref.getString('phone_otp') ?? '';
-                                print("My id${id}");
-                                print("My id${emailotp}");
-                                print("My id${mobileotp}");
+                        AbsorbPointer(
+                          absorbing: disablesendmobileotpbutton,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 240, top: 6),
+                            child: InkWell(
+                              onTap: () async {
+                                if (controller.mobile_controller.text
+                                            .toString() ==
+                                        null ||
+                                    controller.mobile_controller.text.isEmpty ||
+                                    controller.mobile_controller.text == "") {
+                                  Utility()
+                                      .myfluttertoast("Mobile Number is empty");
+                                } else if (controller
+                                        .mobile_controller.text.length >
+                                    10) {
+                                  Utility().myfluttertoast(
+                                      "Please enter the ten digit mobile Number");
+                                } else if (controller
+                                        .mobile_controller.text.length <
+                                    10) {
+                                  Utility().myfluttertoast(
+                                      "Please enter the ten digit mobile Number");
+                                } else {
+                                  SharedPreferences userpref =
+                                      await SharedPreferences.getInstance();
+                                  id = userpref.getString('id') ?? '';
+                                  emailotp =
+                                      userpref.getString('email_otp') ?? '';
+                                  mobileotp =
+                                      userpref.getString('phone_otp') ?? '';
+                                  print("My id${id}");
+                                  print("My id${emailotp}");
+                                  print("My id${mobileotp}");
 
-                                Map mobiledata = {
-                                  'mobile_email': controller
-                                      .mobile_controller.text
-                                      .toString(),
-                                  'process': "signup",
-                                };
+                                  Map mobiledata = {
+                                    'mobile_email': controller
+                                        .mobile_controller.text
+                                        .toString(),
+                                    'process': "signup",
+                                  };
 
-                                print("mobile otp response :${mobiledata}");
+                                  print("mobile otp response :${mobiledata}");
 
-                                controller
-                                    .sendmobileotp(context, mobiledata)
-                                    .then((value) {
-                                  setState(() {
-                                    _motpvisible = !_motpvisible;
+                                  controller
+                                      .sendmobileotp(context, mobiledata)
+                                      .then((value) {
+                                    setState(() {
+                                      _motpvisible = !_motpvisible;
+                                      disablesendmobileotpbutton = true;
+                                    });
+                                    startTimer();
+
+                                    print(codeValue);
+                                  }).onError((error, stackTrace) {
+                                    print(error.toString());
                                   });
-                                  startTimer();
-
-                                  print(codeValue);
-                                }).onError((error, stackTrace) {
-                                  print(error.toString());
-                                });
-                                // setState(() {
-                                //   _motpvisible=!_motpvisible;
-                                // });
-                              }
-                            },
-                            child: Container(
-                              height: 25,
-                              width: 70,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: Color(0xfff5f5f5),
+                                  // setState(() {
+                                  //   _motpvisible=!_motpvisible;
+                                  // });
+                                }
+                              },
+                              child: Container(
+                                height: 25,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Color(0xfff5f5f5),
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  "Send Otp",
+                                  style: TextStyle(color: Colors.black54),
+                                )),
                               ),
-                              child: Center(
-                                  child: Text(
-                                "Send Otp",
-                                style: TextStyle(color: Colors.black54),
-                              )),
                             ),
                           ),
                         ),
@@ -285,12 +298,15 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     focusedBorderColor: FixedColors.purple,
                     onCodeChanged: (code) {
                       print("onCodeChanged $code");
-                      setState(() {
-                        codeValue = code.toString();
-                      });
+                      print("Mobile Otp" + code);
                     },
                     onSubmit: (val) {
                       print("onCodeSubmitted $val");
+                      setState(() {
+                        mobileotps = val;
+
+                        print("User Mobile Otp" + mobileotps.toString());
+                      });
                     },
                   ),
                 ),
@@ -306,11 +322,59 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                   )),
                 ),
                 Visibility(
-                  visible: _motpvisible,
+                  visible: _mobileresend,
                   child: InkWell(
-                    onTap: () {
-                      listenOtp();
-                      startTimer();
+                    onTap: () async {
+                      if (controller.mobile_controller.text.toString() ==
+                              null ||
+                          controller.mobile_controller.text.isEmpty ||
+                          controller.mobile_controller.text == "") {
+                        Utility().myfluttertoast("Mobile Number is empty");
+                      } else if (controller.mobile_controller.text.length >
+                          10) {
+                        Utility().myfluttertoast(
+                            "Please enter the ten digit mobile Number");
+                      } else if (controller.mobile_controller.text.length <
+                          10) {
+                        Utility().myfluttertoast(
+                            "Please enter the ten digit mobile Number");
+                      } else {
+                        SharedPreferences userpref =
+                            await SharedPreferences.getInstance();
+                        id = userpref.getString('id') ?? '';
+                        emailotp = userpref.getString('email_otp') ?? '';
+                        mobileotp = userpref.getString('phone_otp') ?? '';
+                        print("My id${id}");
+                        print("My id${emailotp}");
+                        print("My id${mobileotp}");
+
+                        Map mobiledata = {
+                          'mobile_email':
+                              controller.mobile_controller.text.toString(),
+                          'process': "signup",
+                        };
+
+                        print("mobile otp response :${mobiledata}");
+
+                        controller
+                            .sendmobileotp(context, mobiledata)
+                            .then((value) {
+                          setState(() {
+                            setState(() {
+                              _motpvisible = _motpvisible;
+                            });
+
+                            startTimer();
+                          });
+
+                          print(codeValue);
+                        }).onError((error, stackTrace) {
+                          print(error.toString());
+                        });
+                        // setState(() {
+                        //   _motpvisible=!_motpvisible;
+                        // });
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
@@ -335,73 +399,78 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                           controller: controller.email_controller,
                           decoration: InputDecoration(
                             hintText: "Email",
+                            labelText: "Email",
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15.0)),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 240, top: 6),
-                          child: InkWell(
-                            onTap: () async {
-                              bool emailidvalidate = EmailValidator.validate(
-                                  controller.email_controller.text.toString());
-                              if (controller.mobile_controller.text
-                                          .toString() ==
-                                      null ||
-                                  controller.mobile_controller.text.isEmpty ||
-                                  controller.mobile_controller.text == "") {
-                                Utility().myfluttertoast("Email Id is empty");
-                              } else if (emailidvalidate == false) {
-                                Utility().myfluttertoast(
-                                    "Enter the proper Email Id");
-                              } else {
-                                _timer.cancel();
-                                SharedPreferences userpref =
-                                    await SharedPreferences.getInstance();
-                                id = userpref.getString('id') ?? '';
-                                emailotp =
-                                    userpref.getString('email_otp') ?? '';
-                                mobileotp =
-                                    userpref.getString('phone_otp') ?? '';
-                                print("My id${id}");
-                                print("My id${emailotp}");
-                                print("My id${mobileotp}");
-                                Map emailiddata = {
-                                  'mobile_email': controller
-                                      .email_controller.text
-                                      .toString(),
-                                  'process': "signup",
-                                  'id': id.toString(),
-                                };
-                                print("data:${emailiddata}");
+                        AbsorbPointer(
+                          absorbing: disablesendemailpbutton,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 240, top: 6),
+                            child: InkWell(
+                              onTap: () async {
+                                bool emailidvalidate = EmailValidator.validate(
+                                    controller.email_controller.text.toString());
+                                if (controller.mobile_controller.text
+                                            .toString() ==
+                                        null ||
+                                    controller.mobile_controller.text.isEmpty ||
+                                    controller.mobile_controller.text == "") {
+                                  Utility().myfluttertoast("Email Id is empty");
+                                } else if (emailidvalidate == false) {
+                                  Utility().myfluttertoast(
+                                      "Enter the proper Email Id");
+                                } else {
+                                  _timer.cancel();
+                                  SharedPreferences userpref =
+                                      await SharedPreferences.getInstance();
+                                  id = userpref.getString('id') ?? '';
+                                  emailotp =
+                                      userpref.getString('email_otp') ?? '';
+                                  mobileotp =
+                                      userpref.getString('phone_otp') ?? '';
+                                  print("My id${id}");
+                                  print("My id${emailotp}");
+                                  print("My id${mobileotp}");
+                                  Map emailiddata = {
+                                    'mobile_email': controller
+                                        .email_controller.text
+                                        .toString(),
+                                    'process': "signup",
+                                    'id': id.toString(),
+                                  };
+                                  print("data:${emailiddata}");
 
-                                controller
-                                    .sendemailOtp(context, emailiddata)
-                                    .then((value) {
-                                  setState(() {
-                                    _visible = !_visible;
+                                  controller
+                                      .sendemailOtp(context, emailiddata)
+                                      .then((value) {
+                                    setState(() {
+                                      _visible = !_visible;
+                                      disablesendemailpbutton = true;
+                                    });
+                                    startTimeremail();
+
+                                    print(codeValue);
+                                  }).onError((error, stackTrace) {
+                                    print(error.toString());
                                   });
-                                  startTimeremail();
-
-                                  print(codeValue);
-                                }).onError((error, stackTrace) {
-                                  print(error.toString());
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: 25,
-                              width: 70,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: Color(0xfff5f5f5),
+                                }
+                              },
+                              child: Container(
+                                height: 25,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Color(0xfff5f5f5),
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  "Send Otp",
+                                  style: TextStyle(color: Colors.black54),
+                                )),
                               ),
-                              child: Center(
-                                  child: Text(
-                                "Send Otp",
-                                style: TextStyle(color: Colors.black54),
-                              )),
                             ),
                           ),
                         ),
@@ -433,7 +502,8 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                       });
                     },
                     onSubmit: (val) {
-                      print("onCodeSubmitted $val");
+                      emailotps = val;
+                      print("User Email Otp ${emailotps}");
                     },
                   ),
                 ),
@@ -449,11 +519,49 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                   )),
                 ),
                 Visibility(
-                  visible: _visible,
+                  visible: _emailresend,
                   child: InkWell(
-                    onTap: () {
-                      listenOtp();
-                      startTimer();
+                    onTap: () async {
+                      bool emailidvalidate = EmailValidator.validate(
+                          controller.email_controller.text.toString());
+                      if (controller.mobile_controller.text.toString() ==
+                              null ||
+                          controller.mobile_controller.text.isEmpty ||
+                          controller.mobile_controller.text == "") {
+                        Utility().myfluttertoast("Email Id is empty");
+                      } else if (emailidvalidate == false) {
+                        Utility().myfluttertoast("Enter the proper Email Id");
+                      } else {
+                        _timer.cancel();
+                        SharedPreferences userpref =
+                            await SharedPreferences.getInstance();
+                        id = userpref.getString('id') ?? '';
+                        emailotp = userpref.getString('email_otp') ?? '';
+                        mobileotp = userpref.getString('phone_otp') ?? '';
+                        print("My id${id}");
+                        print("My id${emailotp}");
+                        print("My id${mobileotp}");
+                        Map emailiddata = {
+                          'mobile_email':
+                              controller.email_controller.text.toString(),
+                          'process': "signup",
+                          'id': id.toString(),
+                        };
+                        print("data:${emailiddata}");
+
+                        controller
+                            .sendemailOtp(context, emailiddata)
+                            .then((value) {
+                          setState(() {
+                            _visible = !_visible;
+                          });
+                          startTimeremail();
+
+                          print(codeValue);
+                        }).onError((error, stackTrace) {
+                          print(error.toString());
+                        });
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20, top: 10),
@@ -468,88 +576,6 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   children: [
-                //     Padding(
-                //       padding: const EdgeInsets.only(left: 10),
-                //       child: Icon(
-                //         Icons.check_box_outline_blank_outlined,
-                //         color: FixedColors.grey,
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 3,
-                //     ),
-                //     Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           crossAxisAlignment: CrossAxisAlignment.center,
-                //           children: [
-                //             Text(
-                //               'I have read and agree with the',
-                //               style: TextStyle(
-                //                   fontSize: 12,
-                //                   color: FixedColors.grey,
-                //                   fontFamily: 'Poppins',
-                //                   fontWeight: FontWeight.w600),
-                //             ),
-                //             InkWell(
-                //               onTap: () {},
-                //               child: Text(
-                //                 ' Terms & conditions,',
-                //                 style: TextStyle(
-                //                     fontSize: 12,
-                //                     color: FixedColors.purple,
-                //                     fontFamily: 'Poppins',
-                //                     fontWeight: FontWeight.w600),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           crossAxisAlignment: CrossAxisAlignment.center,
-                //           children: [
-                //             InkWell(
-                //               onTap: () {},
-                //               child: Text(
-                //                 'Privacy Policy',
-                //                 style: TextStyle(
-                //                     fontSize: 12,
-                //                     color: FixedColors.purple,
-                //                     fontWeight: FontWeight.w600),
-                //               ),
-                //             ),
-                //             Text(
-                //               ' & ',
-                //               style: TextStyle(
-                //                   fontSize: 12,
-                //                   color: FixedColors.grey,
-                //                   fontFamily: 'Poppins',
-                //                   fontWeight: FontWeight.w600),
-                //             ),
-                //             InkWell(
-                //               onTap: () {},
-                //               child: Text(
-                //                 'End User License Agreement ',
-                //                 style: TextStyle(
-                //                     fontSize: 12,
-                //                     color: FixedColors.purple,
-                //                     fontFamily: 'Poppins',
-                //                     fontWeight: FontWeight.w600),
-                //               ),
-                //             ),
-                //           ],
-                //         )
-                //       ],
-                //     )
-                //   ],
-                // ),
 
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5),
@@ -570,12 +596,11 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                         print("My id${id}");
                         print("My id${emailotp}");
                         print("My id${mobileotp}");
+                        print("Mobile Otp data" + mobileotps.toString());
 
                         Map Registerparam = {
-                          'first_name':
-                              controller.first_name_controller.text.toString(),
-                          'last_name':
-                              controller.last_name_controller.text.toString(),
+                          'first_name': controller.first_name_controller.text.toString(),
+                          'last_name': controller.last_name_controller.text.toString(),
                           'phone': controller.mobile_controller.text.toString(),
                           'email': controller.email_controller.text.toString(),
                           'email_otp': emailotp.toString(),
@@ -583,11 +608,8 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                           'id': id.toString(),
                         };
                         print("Register data:${Registerparam}");
-                        controller.Register(context, Registerparam);
-
-                        print("My ids:${id}");
-                        print("My ids:${emailotp}");
-                        print("My ids:${mobileotp}");
+                        controller.Register(context, Registerparam,
+                            mobileotps.toString(), emailotps.toString());
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
