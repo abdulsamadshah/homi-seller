@@ -5,10 +5,11 @@ import 'package:homlisellerapp/app/shared/utility.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import '../View_Model/Shopdetails_controller.dart';
 import '../constants/colors.dart';
 import '../constants/colors.dart';
+import '../routes/RoutesName.dart';
 import '../shared/color.dart';
 
 class ShopDetails extends StatefulWidget {
@@ -176,7 +177,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                   child: Container(
                     height: 49,
                     child: TextField(
-                      controller: controller.companypannumber,
+                      controller: controller.companyname,
                       textAlignVertical: TextAlignVertical.bottom,
                       enabled: true,
                       decoration: InputDecoration(
@@ -235,7 +236,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                     ),
                     InkWell(
                       onTap: () {
-                        getcompanypanimage();
+                        selectComapanypandialog(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 205, top: 12),
@@ -302,7 +303,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                     ),
                     InkWell(
                       onTap: () {
-                        getcompanygstimage();
+                        selectComapanygstdialog(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 205, top: 12),
@@ -391,7 +392,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                     ),
                     InkWell(
                       onTap: () {
-                        getcompanyfssaicertificateimage();
+                        selectComapanyfssaicerficatedialog(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 205, top: 12),
@@ -482,7 +483,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                     ),
                     InkWell(
                       onTap: () {
-                        getcompanybrandimage();
+                        selectComapanybranddialog(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 205, top: 12),
@@ -843,27 +844,28 @@ class _ShopDetailssState extends State<ShopDetails> {
                 ),
                 InkWell(
                   onTap: () {
-                    Map shopdetailsparam = {
-                      'company_name': controller.companyname.text.toString(),
-                      'company_pan_no': controller.companypannumber,
-                      'company_pan_image': companypanphoto.toString(),
-                      'gst_number': controller.companygstnumber.text.toString(),
-                      'gst_image': companygstphoto.toString(),
-                      'fssai_number': controller.companyfssainumber.text.toString(),
-                      'fssai_image': companyfssaicertificate.toString(),
-                      'fssai_date': controller.companyfssaidate.text.toString(),
-                      'whatsapp': controller.companywhatsappnumber.text.toString(),
-                      'brand_name': controller.companybrandname.text.toString(),
-                      'company_logo': companybrandlogo.toString(),
-                      'bussiness_address_1': controller.companyaddress.text.toString(),
-                      'bussiness_address_2': controller.companyaddress2.text.toString(),
-                      'state': Statename.toString(),
-                      'city': Cityname.toString(),
-                      'district': Districtname.toString(),
-                      'pin_code': controller.companypincode.text.toString(),
-                      'id': id.toString(),
-                    };
-                    controller.sellerShopdetail(context, shopdetailsparam);
+                    // Map shopdetailsparam = {
+                    //   'company_name': controller.companyname.text.toString(),
+                    //   'company_pan_no': controller.companypannumber,
+                    //   'company_pan_image': companypanphoto.toString(),
+                    //   'gst_number': controller.companygstnumber.text.toString(),
+                    //   'gst_image': companygstphoto.toString(),
+                    //   'fssai_number': controller.companyfssainumber.text.toString(),
+                    //   'fssai_image': companyfssaicertificate.toString(),
+                    //   'fssai_date': controller.companyfssaidate.text.toString(),
+                    //   'whatsapp': controller.companywhatsappnumber.text.toString(),
+                    //   'brand_name': controller.companybrandname.text.toString(),
+                    //   'company_logo': companybrandlogo.toString(),
+                    //   'bussiness_address_1': controller.companyaddress.text.toString(),
+                    //   'bussiness_address_2': controller.companyaddress2.text.toString(),
+                    //   'state': Statename.toString(),
+                    //   'city': Cityname.toString(),
+                    //   'district': Districtname.toString(),
+                    //   'pin_code': controller.companypincode.text.toString(),
+                    //   'id': id.toString(),
+                    // };
+                    // controller.sellerShopdetail(context, shopdetailsparam);
+                    uploadpersonaldetails();
                   },
                   child: Center(
                     child: Container(
@@ -898,51 +900,423 @@ class _ShopDetailssState extends State<ShopDetails> {
     );
   }
 
-  Future getcompanypanimage() async {
+  Future<void> uploadpersonaldetails() async {
+
+    //user data to server
+    SharedPreferences userpref =
+    await SharedPreferences.getInstance();
+    setState(() {
+      id = userpref.getString('id') ?? '';
+    });
+
+    print("ids${id.toString()}");
+
+    var uri = Uri.parse('http://homliadmin.globusachievers.com/api/seller-company');
+
+    var request = new http.MultipartRequest('POST', uri);
+
+
+
+    request.fields['company_name'] = controller.companyname.text.toString();
+    request.fields['company_pan_no'] = controller.companypannumber.text.toString();
+    request.fields['gst_number'] = controller.companygstnumber.text.toString();
+    request.fields['fssai_number'] = controller.companyfssainumber.text.toString();
+    request.fields['fssai_date'] = controller.companyfssaidate.text.toString();
+    request.fields['whatsapp'] = controller.companywhatsappnumber.text.toString();
+    request.fields['brand_name'] = controller.companybrandname.text.toString();
+    request.fields['bussiness_address_1'] = controller.companyaddress.text.toString();
+    request.fields['bussiness_address_2'] = controller.companyaddress2.text.toString();
+    request.fields['state'] = Statename.toString();
+    request.fields['city'] = Cityname.toString();
+    request.fields['district'] = Districtname.toString();
+    request.fields['pin_code'] = controller.companypincode.text.toString();
+    request.fields['id'] = id.toString();
+
+
+
+    var company_pan_imagemultiport = await http.MultipartFile.fromPath("company_pan_image", companypanphoto!.path);
+    request.files.add(company_pan_imagemultiport);
+
+    var gst_imagemultiport = await http.MultipartFile.fromPath("gst_image", companygstphoto!.path);
+    request.files.add(gst_imagemultiport);
+
+    var fssai_imagemultiport = await http.MultipartFile.fromPath("fssai_image", companyfssaicertificate!.path);
+    request.files.add(fssai_imagemultiport);
+
+    var company_logomultiport = await http.MultipartFile.fromPath("company_logo", companybrandlogo!.path);
+    request.files.add(company_logomultiport);
+
+
+
+    print("All parametres"+request.toString());
+
+    var response = await request.send();
+
+    print(response.stream.toString());
+    if (response.statusCode == 200) {
+      print('Shop Detail Uploaded Successfully');
+      // Utility().myfluttertoast(value['msg']);
+      Navigator.pushNamed(context, RoutesName.HOME);
+      Utility().myfluttertoast("Shop Detail Uploaded Successfully");
+    } else {
+      print('failed');
+      Utility().myfluttertoast("Some thing wrong data");
+    }
+  }
+
+  Future getcompanypanphoto() async {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
         companypanphoto = File(pickfile.path);
-        Utility().myfluttertoast("Image Uploaded Successfully");
+        Utility().myfluttertoast("Pan Uploaded Successfully");
       } else {
         Utility().myfluttertoast("No Image Selected");
       }
     });
   }
-
-  Future getcompanygstimage() async {
+  Future getcompanypancamera() async {
+    final pickfile = await pickImage.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickfile != null) {
+        companypanphoto = File(pickfile.path);
+        Utility().myfluttertoast("Pan  Uploaded Successfully");
+      } else {
+        Utility().myfluttertoast("No Image Selected");
+      }
+    });
+  }
+  void selectComapanypandialog(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              height: 120,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      getcompanypancamera();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.add_a_photo),
+                      title: Text("Camera"),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      getcompanypanphoto();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.image),
+                      title: Text("Gallery"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+  
+  
+  
+  Future getcompanygstphoto() async {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
         companygstphoto = File(pickfile.path);
-        Utility().myfluttertoast("Image Uploaded Successfully");
+        Utility().myfluttertoast("Gst Image Uploaded Successfully");
       } else {
         Utility().myfluttertoast("No Image Selected");
       }
     });
   }
+  Future getcompanygstcamera() async {
+    final pickfile = await pickImage.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickfile != null) {
+        companygstphoto = File(pickfile.path);
+        Utility().myfluttertoast("Gst Image  Uploaded Successfully");
+      } else {
+        Utility().myfluttertoast("No Image Selected");
+      }
+    });
+  }
+  void selectComapanygstdialog(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              height: 120,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      getcompanygstcamera();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.add_a_photo),
+                      title: Text("Camera"),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      getcompanygstphoto();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.image),
+                      title: Text("Gallery"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
-  Future getcompanyfssaicertificateimage() async {
+
+
+  Future getcompanyfssaicerficatephoto() async {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
         companyfssaicertificate = File(pickfile.path);
-        Utility().myfluttertoast("Image Uploaded Successfully");
+        Utility().myfluttertoast("Fssai Certificate Uploaded Successfully");
+      } else {
+        Utility().myfluttertoast("No Image Selected");
+      }
+    });
+  }
+  Future getcompanyfssaicerficatecamera() async {
+    final pickfile = await pickImage.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickfile != null) {
+        companyfssaicertificate = File(pickfile.path);
+        Utility().myfluttertoast("Fssai Certificate  Uploaded Successfully");
       } else {
         Utility().myfluttertoast("No Image Selected");
       }
     });
   }
 
-  Future getcompanybrandimage() async {
+  void selectComapanyfssaicerficatedialog(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              height: 120,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      getcompanyfssaicerficatecamera();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.add_a_photo),
+                      title: Text("Camera"),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      getcompanyfssaicerficatephoto();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.image),
+                      title: Text("Gallery"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
+  Future getcompanybrandphoto() async {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
         companybrandlogo = File(pickfile.path);
-        Utility().myfluttertoast("Image Uploaded Successfully");
+        Utility().myfluttertoast("Brand Logo Uploaded Successfully");
       } else {
         Utility().myfluttertoast("No Image Selected");
       }
     });
   }
+  Future getcompanybrandcamera() async {
+    final pickfile = await pickImage.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickfile != null) {
+        companybrandlogo = File(pickfile.path);
+        Utility().myfluttertoast("Brand Logo  Uploaded Successfully");
+      } else {
+        Utility().myfluttertoast("No Image Selected");
+      }
+    });
+  }
+
+  void selectComapanybranddialog(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              height: 120,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      getcompanybrandcamera();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.add_a_photo),
+                      title: Text("Camera"),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      getcompanybrandphoto();
+                      Navigator.pop(context);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.image),
+                      title: Text("Gallery"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
+  // Future<void> uploadpersonaldetails() async {
+  //
+  //
+  //
+  //   SharedPreferences userpref =
+  //   await SharedPreferences.getInstance();
+  //   setState(() {
+  //     id = userpref.getString('id') ?? '';
+  //   });
+  //
+  //
+  //
+  //   var uri = Uri.parse('http://homliadmin.globusachievers.com/api/seller-personal');
+  //
+  //   var request = new http.MultipartRequest('POST', uri);
+  //
+  //
+  //   request.fields['company_name'] = controller.companyname.text.toString();
+  //   request.fields['company_pan_no'] = controller.companypannumber.toString();
+  //   request.fields['gst_number'] = controller.companygstnumber.text.toString();
+  //   request.fields['fssai_number'] = controller.companyfssainumber.text.toString();
+  //   request.fields['fssai_date'] = controller.companyfssaidate.text.toString();
+  //   request.fields['whatsapp'] = controller.companywhatsappnumber.text.toString();
+  //   request.fields['brand_name'] = controller.companybrandname.text.toString();
+  //   request.fields['bussiness_address_1'] = controller.companyaddress.text.toString();
+  //   request.fields['bussiness_address_2'] =controller.companyaddress2.text.toString();
+  //   request.fields['state'] =Statename.toString();
+  //   request.fields['city'] =Cityname.toString();
+  //   request.fields['district'] =Districtname.toString();
+  //   request.fields['pin_code'] =controller.companypincode.text.toString();
+  //   request.fields['id'] =id.toString();
+  //
+  //   Map shopdetailsparam = {
+  //     'company_name': controller.companyname.text.toString(),
+  //     'company_pan_no': controller.companypannumber,
+  //     'company_pan_image': companypanphoto.toString(),
+  //     'gst_number': controller.companygstnumber.text.toString(),
+  //     'gst_image': companygstphoto.toString(),
+  //     'fssai_number': controller.companyfssainumber.text.toString(),
+  //     'fssai_image': companyfssaicertificate.toString(),
+  //     'fssai_date': controller.companyfssaidate.text.toString(),
+  //     'whatsapp': controller.companywhatsappnumber.text.toString(),
+  //     'brand_name': controller.companybrandname.text.toString(),
+  //     'company_logo': companybrandlogo.toString(),
+  //     'bussiness_address_1': controller.companyaddress.text.toString(),
+  //     'bussiness_address_2': controller.companyaddress2.text.toString(),
+  //     'state': Statename.toString(),
+  //     'city': Cityname.toString(),
+  //     'district': Districtname.toString(),
+  //     'pin_code': controller.companypincode.text.toString(),
+  //     'id': id.toString(),
+  //   };
+  //
+  //   var company_logostream = new http.ByteStream(companybrandlogo!.openRead());
+  //   company_logostream.cast();
+  //   var company_logostreamlenghth = await companybrandlogo!.length();
+  //
+  //   var gst_imagestreamport = new http.MultipartFile('company_logo', company_logostream, company_logostreamlenghth);
+  //   request.files.add(gst_imagestreamport);
+  //
+  //   var fssai_imagestream = new http.ByteStream(companyfssaicertificate!.openRead());
+  //   fssai_imagestream.cast();
+  //   var fssai_imagestreamlength = await companyfssaicertificate!.length();
+  //
+  //   var gst_imagestreamport = new http.MultipartFile('fssai_image', fssai_imagestream, fssai_imagestreamlength);
+  //   request.files.add(gst_imagestreamport);
+  //
+  //
+  //   var gst_imagestream = new http.ByteStream(companygstphoto!.openRead());
+  //   gst_imagestream.cast();
+  //   var gst_imagestreamlenght = await companygstphoto!.length();
+  //
+  //   var gst_imagestreamport = new http.MultipartFile('gst_image', gst_imagestream, gst_imagestreamlenght);
+  //   request.files.add(gst_imagestreamport);
+  //
+  //
+  //   var company_pan_imagestream = new http.ByteStream(companypanphoto!.openRead());
+  //   company_pan_imagestream.cast();
+  //   var company_pan_imagestreamlenghth = await companypanphoto!.length();
+  //
+  //   var pancardmultiport = new http.MultipartFile('company_pan_image', company_pan_imagestream, company_pan_imagestreamlenghth);
+  //   request.files.add(pancardmultiport);
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //   print("All parametres"+request.toString());
+  //
+  //   var response = await request.send();
+  //
+  //   print(response.stream.toString());
+  //   if (response.statusCode == 200) {
+  //     print('image uploaded');
+  //     Utility().myfluttertoast("Personal Detail Uploaded Successfully");
+  //   } else {
+  //     print('failed');
+  //     Utility().myfluttertoast("Some thing wrong data");
+  //   }
+  // }
+
 }

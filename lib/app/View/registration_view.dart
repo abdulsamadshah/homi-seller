@@ -31,11 +31,16 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
   bool _motpvisible = false;
   bool _mobileresend = false;
   bool _emailresend = false;
+  bool _mobiletimervisible = false;
+  bool _emailtimervisible = false;
+
   String codeValue = "";
   String? id, emailotp, mobileotp;
 
   bool disablesendmobileotpbutton = false;
   bool disablesendemailpbutton = false;
+
+
 
   @override
   void codeUpdated() {
@@ -80,6 +85,9 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
           setState(() {
             timer.cancel();
             _mobileresend = !_mobileresend;
+            _mobiletimervisible = false;
+            _start = 30;
+            _mobileresend=true;
           });
         } else {
           setState(() {
@@ -103,6 +111,9 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
           setState(() {
             timer.cancel();
             _emailresend = !_emailresend;
+            _emailtimervisible = false;
+            _startemail = 30;
+            _emailresend=true;
           });
         } else {
           setState(() {
@@ -242,6 +253,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                     setState(() {
                                       _motpvisible = !_motpvisible;
                                       disablesendmobileotpbutton = true;
+                                      _mobiletimervisible=true;
                                     });
                                     startTimer();
 
@@ -314,7 +326,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                   height: 5,
                 ),
                 Visibility(
-                  visible: _motpvisible,
+                  visible: _mobiletimervisible,
                   child: Center(
                       child: Text(
                     '$_start',
@@ -362,6 +374,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                           setState(() {
                             setState(() {
                               _motpvisible = _motpvisible;
+                              _mobiletimervisible=true;
                             });
 
                             startTimer();
@@ -449,6 +462,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                     setState(() {
                                       _visible = !_visible;
                                       disablesendemailpbutton = true;
+                                      _emailtimervisible=true;
                                     });
                                     startTimeremail();
 
@@ -511,7 +525,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                   height: 5,
                 ),
                 Visibility(
-                  visible: _visible,
+                  visible: _emailtimervisible,
                   child: Center(
                       child: Text(
                     '$_startemail',
@@ -553,7 +567,8 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                             .sendemailOtp(context, emailiddata)
                             .then((value) {
                           setState(() {
-                            _visible = !_visible;
+                            // _visible = !_visible;
+                            _emailtimervisible=true;
                           });
                           startTimeremail();
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +15,9 @@ class LoginController extends GetxController {
   TextEditingController email_controller = TextEditingController();
   Registerrepo repo = Registerrepo();
   final count = 0.obs;
+  late Timer _timer;
+
+
   @override
   void onInit() {
     super.onInit();
@@ -36,8 +41,6 @@ class LoginController extends GetxController {
 
   void increment() => count.value++;
 
-
-
   Future<bool> saveloginotp(String loginotp, String loginmobno) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     sp.setString("loginotp", loginotp);
@@ -46,67 +49,53 @@ class LoginController extends GetxController {
     return true;
   }
 
-  Future<void> loginbyotp(BuildContext context, dynamic data,String loginmono) async {
-    repo.loginotp(data).then((value) {
+  // Future<void> loginbyotp(BuildContext context, dynamic data, String loginmono) async {
+  //   repo.loginotp(data).then((value) {
+  //
+  //     if(value['status'] == "true"){
+  //       print("INput emailandmobno:" + loginmono);
+  //       print("Messages"+value['msg']);
+  //       print("Server Email Otp" + value['data']['email_otp'].toString());
+  //       Utility().myfluttertoast("Send Otp Successfully");
+  //       saveloginotp(value['data']['email_otp'].toString(), loginmono);
+  //
+  //
+  //     }else{
+  //       Utility().myfluttertoast("Please Enter Valid Email Id");
+  //     }
+  //
+  //
+  //   }).onError((error, stackTrace) {
+  //     // Utility().myfluttertoast(error.toString());
+  //     Utility().myfluttertoast("Please Enter Valid Email Id");
+  //     print(error.toString());
+  //   });
+  // }
 
-      Utility().myfluttertoast("Send Otp Successfully");
-      print("My Email Otp"+value['data']['email_otp'].toString());
-      saveloginotp(value['data']['email_otp'],loginmono);
-      // if(value['status'] == "true"){
-      //   if(value['msg'] == "Seller Verification Level 1 Pending"){
-      //     Utility().myfluttertoast(value['message'].toString());
-      //     Navigator.pushNamed(context, RoutesName.REGISTRATION);
-      //   }else if(value['msg'] == "Seller Verification Level 2 Pending"){
-      //     Utility().myfluttertoast(value['message'].toString());
-      //     Navigator.pushNamed(context, RoutesName.PersonalDetails);
-      //   }else if(value['msg'] == "Seller Verification Level 3 Pending"){
-      //     Utility().myfluttertoast(value['message'].toString());
-      //     Navigator.pushNamed(context, RoutesName.ShopDetails);
-      //   }else{
-      //     print("something wrong response");
-      //   }
-      //
-      // }
-
-
-      // Utility().myfluttertoast(value['message'].toString());
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => HomeView()));
-      // print(value['message']);
-    }).onError((error, stackTrace) {
-      Utility().myfluttertoast(error.toString());
-      print(error.toString());
-    });
-  }
-
-
-  Future<void> loginauthmain(BuildContext context, dynamic data,String userinputotp, String mobileotp) async {
+  Future<void> loginauthmain(BuildContext context, dynamic data,
+      String userinputotp, String mobileotp) async {
     repo.loginautmains(data).then((value) {
-
-      Utility().myfluttertoast("Send Otp Successfully");
-
-      if(value['status'] == "true"){
-        if(userinputotp == mobileotp){
-
-          if(value['msg'] == "Seller Verification Level 1 Pending"){
+      print("Userinputotp:${userinputotp} :Mobieotp${mobileotp}");
+      if (value['status'] == "true") {
+        if (userinputotp == mobileotp) {
+          if (value['msg'] == "Seller Verification Level 1 Pending") {
             Utility().myfluttertoast(value['msg'].toString());
             Navigator.pushNamed(context, RoutesName.REGISTRATION);
-          }else if(value['msg'] == "Seller Verification Level 2 Pending"){
+          } else if (value['msg'] == "Seller Verification Level 2 Pending") {
             Utility().myfluttertoast(value['msg'].toString());
             Navigator.pushNamed(context, RoutesName.PersonalDetails);
-          }else if(value['msg'] == "Seller Verification Level 3 Pending"){
+          } else if (value['msg'] == "Seller Verification Level 3 Pending") {
             Utility().myfluttertoast(value['msg'].toString());
             Navigator.pushNamed(context, RoutesName.ShopDetails);
-          }else{
-            print("something wrong response");
+          } else {
+            Utility().myfluttertoast(value['msg'].toString());
+            Navigator.pushNamed(context, RoutesName.HOME);
           }
-
-        }else{
-          print("status issue");
+        } else {
+          Utility().myfluttertoast("Otp was Wrong");
         }
       }
 
-
       // Utility().myfluttertoast(value['message'].toString());
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => HomeView()));
@@ -116,5 +105,4 @@ class LoginController extends GetxController {
       print(error.toString());
     });
   }
-
 }

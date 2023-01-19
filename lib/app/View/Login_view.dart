@@ -1,6 +1,8 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -27,6 +29,7 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
   bool _visible = false;
   bool _loginviootpvisible = true;
   bool _resendotpvisible = false;
+  bool _timervisible = false;
 
   String codeValue = "";
   late Timer _timer;
@@ -43,6 +46,9 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
           setState(() {
             timer.cancel();
             _resendotpvisible = !_resendotpvisible;
+            _timervisible = false;
+            _start = 30;
+            _resendotpvisible = true;
           });
         } else {
           setState(() {
@@ -135,9 +141,20 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
                       padding: const EdgeInsets.only(left: 35),
                       child: InkWell(
                         onTap: () {
-                          setState(() {
-                            startTimer();
-                          });
+                          if (controller.email_controller.text.toString() ==
+                                  null ||
+                              controller.email_controller.text.isEmpty ||
+                              controller.email_controller.text == "") {
+                            Utility().myfluttertoast("Value is empty");
+                          } else {
+                            Map emailiddata = {
+                              'mobile_email':
+                                  controller.email_controller.text.toString(),
+                            };
+                            print("loginparametres: ${emailiddata}");
+                            loginbyotpresend(context, emailiddata,
+                                controller.email_controller.text.toString());
+                          }
                         },
                         child: Text(
                           'Resend OTP',
@@ -163,19 +180,8 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
 
                         print("loginparametres: ${emailiddata}");
 
-                        controller
-                            .loginbyotp(context, emailiddata,controller.email_controller.text.toString())
-                            .then((value) {
-                          setState(() {
-                            _visible = !_visible;
-                            _loginviootpvisible = !_loginviootpvisible;
-                          });
-                          startTimer();
-
-                          print(codeValue);
-                        }).onError((error, stackTrace) {
-                          print(error.toString());
-                        });
+                        loginbyotp(context, emailiddata,
+                            controller.email_controller.text.toString());
                       }
                     },
                     child: Padding(
@@ -211,26 +217,23 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
                   borderColor: FixedColors.purple,
                   showFieldAsBox: true,
                   focusedBorderColor: FixedColors.purple,
-
                   onCodeChanged: (code) {
                     print("onCodeChanged $code");
                     setState(() {
                       codeValue = code.toString();
-
                     });
                   },
                   onSubmit: (val) {
                     userinputotp = val;
-                    print("User Input  Email  ${userinputotp}");
+                    print("User Input Email Id: ${userinputotp}");
                   },
-
                 ),
               ),
               const SizedBox(
                 height: 5,
               ),
               Visibility(
-                visible: _visible,
+                visible: _timervisible,
                 child: Center(
                     child: Text(
                   '$_start',
@@ -241,16 +244,18 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
                 height: 5,
               ),
               InkWell(
-                onTap: () async{
-                  SharedPreferences userpref = await SharedPreferences.getInstance();
+                onTap: () async {
+                  SharedPreferences userpref =
+                      await SharedPreferences.getInstance();
                   loginotp = userpref.getString('loginotp') ?? '';
 
-                  Map mainlogindata={
-                    'mobile_email':controller.email_controller.text.toString(),
-                    'otp':loginotp.toString(),
+                  Map mainlogindata = {
+                    'mobile_email': controller.email_controller.text.toString(),
+                    'otp': loginotp.toString(),
                   };
 
-                  controller.loginauthmain(context, mainlogindata, userinputotp.toString(), loginotp.toString());
+                  controller.loginauthmain(context, mainlogindata,
+                      userinputotp.toString(), loginotp.toString());
                 },
                 child: Container(
                   width: 290,
@@ -387,5 +392,61 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
         )),
       ),
     );
+  }
+
+  Future<void> loginbyotp(
+      BuildContext context, dynamic data, String loginmono) async {
+    final response = await http.post(
+        Uri.parse("http://homliadmin.globusachievers.com/api/seller-login-otp"),
+        body: data);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body.toString());
+      if (data['status'] == "true") {
+        _visible = !_visible;
+        _loginviootpvisible = !_loginviootpvisible;
+        _timervisible = true;
+        startTimer();
+        print(codeValue);
+
+        print("INput emailandmobno:" + loginmono);
+        print("Messages" + data['msg']);
+        print("Server Email Otp" + data['data']['email_otp'].toString());
+        controller.saveloginotp(
+            data['data']['email_otp'].toString(), loginmono);
+        Utility().myfluttertoast("Send Otp Successfully");
+      } else {
+        Utility().myfluttertoast("Please Enter Valid Email Id");
+      }
+    } else {
+      Utility().myfluttertoast("Please Enter Valid Email Id");
+    }
+  }
+
+  Future<void> loginbyotpresend(
+      BuildContext context, dynamic data, String loginmono) async {
+    final response = await http.post(
+        Uri.parse("http://homliadmin.globusachievers.com/api/seller-login-otp"),
+        body: data);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body.toString());
+      if (data['status'] == "true") {
+        _timervisible = true;
+        startTimer();
+        print(codeValue);
+
+        print("INput emailandmobno:" + loginmono);
+        print("Messages" + data['msg']);
+        print("Server Email Otp" + data['data']['email_otp'].toString());
+        controller.saveloginotp(
+            data['data']['email_otp'].toString(), loginmono);
+        Utility().myfluttertoast("Send Otp Successfully");
+      } else {
+        Utility().myfluttertoast("Please Enter Valid Email Id");
+      }
+    } else {
+      Utility().myfluttertoast("Please Enter Valid Email Id");
+    }
   }
 }

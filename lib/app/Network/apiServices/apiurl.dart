@@ -7,5 +7,5 @@ class Apiurl {
   static const String Personaldataurl = Baseurl + "seller-personal";
   static const String Companydataurl = Baseurl + "seller-company";
 
-
+  // _timervisible = true;
 }
