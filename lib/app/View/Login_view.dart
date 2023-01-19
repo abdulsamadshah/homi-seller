@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import '../View_Model/login_controller.dart';
+import '../shared/validator.dart';
 import 'home_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -97,297 +98,329 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
         child: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.only(top: 100),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: Center(
-                  child: CircleAvatar(
-                    radius: 128,
-                    backgroundColor: Colors.transparent,
-                    child: Image(
-                      image: AssetImage('assets/images/png/homilylogo.png'),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                'Namaste!',
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 22,
-                    color: FixedColors.black,
-                    fontFamily: 'Poppins'),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFieldWidget(
-                  controller: controller.email_controller,
-                  hintText: 'Nikhil.Zrow@gmail.com',
-                  labelText: 'Email / Phone'),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Visibility(
-                    visible: _resendotpvisible,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 35),
-                      child: InkWell(
-                        onTap: () {
-                          if (controller.email_controller.text.toString() ==
-                                  null ||
-                              controller.email_controller.text.isEmpty ||
-                              controller.email_controller.text == "") {
-                            Utility().myfluttertoast("Value is empty");
-                          } else {
-                            Map emailiddata = {
-                              'mobile_email':
-                                  controller.email_controller.text.toString(),
-                            };
-                            print("loginparametres: ${emailiddata}");
-                            loginbyotpresend(context, emailiddata,
-                                controller.email_controller.text.toString());
-                          }
-                        },
-                        child: Text(
-                          'Resend OTP',
-                          style: TextStyle(
-                              fontFamily: 'Poppins',
-                              color: FixedColors.purple,
-                              fontWeight: FontWeight.w600),
-                        ),
+          child: Form(
+            key: controller.loginKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 25),
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 128,
+                      backgroundColor: Colors.transparent,
+                      child: Image(
+                        image: AssetImage('assets/images/png/homilylogo.png'),
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (controller.email_controller.text.toString() == null ||
-                          controller.email_controller.text.isEmpty ||
-                          controller.email_controller.text == "") {
-                        Utility().myfluttertoast("Value is empty");
-                      } else {
-                        Map emailiddata = {
-                          'mobile_email':
-                              controller.email_controller.text.toString(),
+                ),
+                Text(
+                  'Namaste!',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 22,
+                      color: FixedColors.black,
+                      fontFamily: 'Poppins'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    // height: 40,
+
+                    child: TextFormField(
+                      validator: Validator.validateNumber,
+                      controller: controller.email_controller,
+                      decoration: InputDecoration(
+                        hintMaxLines: 10,
+                        contentPadding: EdgeInsets.only(left: 10, top: 6),
+                        hintText: 'Nikhil.Zrow@gmail.com',
+                        labelText: 'Email / Phone',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.0)),
+                      ),
+
+                    ),
+                  ),
+                ),
+                // TextFieldWidget(
+                //     controller: controller.email_controller,
+                //     hintText: 'Nikhil.Zrow@gmail.com',
+                //     labelText: 'Email / Phone'),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Visibility(
+                      visible: _resendotpvisible,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 35),
+                        child: InkWell(
+                          onTap: () {
+                            if (controller.email_controller.text.toString() ==
+                                    null ||
+                                controller.email_controller.text.isEmpty ||
+                                controller.email_controller.text == "") {
+                              Utility().myfluttertoast("Mob/Email is empty");
+                            } else {
+                              Map emailiddata = {
+                                'mobile_email':
+                                    controller.email_controller.text.toString(),
+                              };
+                              print("loginparametres: ${emailiddata}");
+                              loginbyotpresend(context, emailiddata,
+                                  controller.email_controller.text.toString());
+                            }
+                          },
+                          child: Text(
+                            'Resend OTP',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: FixedColors.purple,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (controller.email_controller.text.toString() == null ||
+                            controller.email_controller.text.isEmpty ||
+                            controller.email_controller.text == "") {
+                          Utility().myfluttertoast("Value is empty");
+                        } else {
+                          Map emailiddata = {
+                            'mobile_email':
+                                controller.email_controller.text.toString(),
+                          };
+
+                          print("loginparametres: ${emailiddata}");
+
+                          loginbyotp(context, emailiddata,
+                              controller.email_controller.text.toString());
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 35),
+                        child: Visibility(
+                          visible: _loginviootpvisible,
+                          child: Text(
+                            'Login via OTP',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: FixedColors.purple,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Visibility(
+                  visible: _visible,
+                  child: OtpTextField(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    decoration: const InputDecoration(
+                        constraints:
+                            BoxConstraints(minHeight: 0.5, minWidth: 0.5)),
+                    borderWidth: 1,
+                    keyboardType: TextInputType.number,
+                    cursorColor: FixedColors.black,
+                    numberOfFields: 4,
+                    borderColor: FixedColors.purple,
+                    showFieldAsBox: true,
+                    focusedBorderColor: FixedColors.purple,
+                    onCodeChanged: (code) {
+                      print("onCodeChanged $code");
+                      setState(() {
+                        codeValue = code.toString();
+                      });
+                    },
+                    onSubmit: (val) {
+                      userinputotp = val;
+                      print("User Input Email Id: ${userinputotp}");
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Visibility(
+                  visible: _timervisible,
+                  child: Center(
+                      child: Text(
+                    '$_start',
+                    style: TextStyle(color: FixedColors.grey),
+                  )),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                InkWell(
+                  onTap: () async {
+                    if (controller.loginKey.currentState!.validate()) {
+                      try{
+                        SharedPreferences userpref =
+                            await SharedPreferences.getInstance();
+                        loginotp = userpref.getString('loginotp') ?? '';
+
+                        Map mainlogindata = {
+                          'mobile_email': controller.email_controller.text.toString(),
+                          'otp': loginotp.toString(),
                         };
 
-                        print("loginparametres: ${emailiddata}");
-
-                        loginbyotp(context, emailiddata,
-                            controller.email_controller.text.toString());
+                        controller.loginauthmain(context, mainlogindata,
+                            userinputotp.toString(), loginotp.toString());
+                      }catch(e){
+                        print(e.toString());
                       }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 35),
-                      child: Visibility(
-                        visible: _loginviootpvisible,
-                        child: Text(
-                          'Login via OTP',
-                          style: TextStyle(
-                              fontFamily: 'Poppins',
-                              color: FixedColors.purple,
-                              fontWeight: FontWeight.w600),
+
+                    }else{
+                      // Utility().myfluttertoast("Enter the Valid Data");
+                    }
+
+                  },
+                  child: Container(
+                    width: 290,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: FixedColors.purple,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Visibility(
-                visible: _visible,
-                child: OtpTextField(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  decoration: const InputDecoration(
-                      constraints:
-                          BoxConstraints(minHeight: 0.5, minWidth: 0.5)),
-                  borderWidth: 1,
-                  keyboardType: TextInputType.number,
-                  cursorColor: FixedColors.black,
-                  numberOfFields: 4,
-                  borderColor: FixedColors.purple,
-                  showFieldAsBox: true,
-                  focusedBorderColor: FixedColors.purple,
-                  onCodeChanged: (code) {
-                    print("onCodeChanged $code");
-                    setState(() {
-                      codeValue = code.toString();
-                    });
-                  },
-                  onSubmit: (val) {
-                    userinputotp = val;
-                    print("User Input Email Id: ${userinputotp}");
-                  },
                 ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Visibility(
-                visible: _timervisible,
-                child: Center(
-                    child: Text(
-                  '$_start',
-                  style: TextStyle(color: FixedColors.grey),
-                )),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              InkWell(
-                onTap: () async {
-                  SharedPreferences userpref =
-                      await SharedPreferences.getInstance();
-                  loginotp = userpref.getString('loginotp') ?? '';
-
-                  Map mainlogindata = {
-                    'mobile_email': controller.email_controller.text.toString(),
-                    'otp': loginotp.toString(),
-                  };
-
-                  controller.loginauthmain(context, mainlogindata,
-                      userinputotp.toString(), loginotp.toString());
-                },
-                child: Container(
-                  width: 290,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: FixedColors.purple,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Want to be a Seller? ',
-                    style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                        color: FixedColors.grey),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const RegistrationView()));
-                    },
-                    child: const Text(
-                      'Register Now',
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Want to be a Seller? ',
                       style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
-                          color: Colors.blue),
+                          color: FixedColors.grey),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
-                'Follow us on ',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    color: FixedColors.grey),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      margin:
-                          const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const RegistrationView()));
+                      },
+                      child: const Text(
+                        'Register Now',
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: Colors.blue),
                       ),
-                      child: const Image(
-                          image:
-                              AssetImage('assets/images/png/instagram 1.png')),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      margin:
-                          const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                  ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  'Follow us on ',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: FixedColors.grey),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(right: 8, left: 8, bottom: 8),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: const Image(
+                            image:
+                                AssetImage('assets/images/png/instagram 1.png')),
                       ),
-                      child: const Image(
-                          image: AssetImage(
-                              'assets/images/png/facebook (1) 1.png')),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      margin:
-                          const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(right: 8, left: 8, bottom: 8),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: const Image(
+                            image: AssetImage(
+                                'assets/images/png/facebook (1) 1.png')),
                       ),
-                      child: const Image(
-                          image: AssetImage(
-                              'assets/images/png/twitter (1) 1.png')),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      margin:
-                          const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(right: 8, left: 8, bottom: 8),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: const Image(
+                            image: AssetImage(
+                                'assets/images/png/twitter (1) 1.png')),
                       ),
-                      child: const Image(
-                          image: AssetImage('assets/images/png/youtube 1.png')),
                     ),
-                  ),
-                ],
-              )
-            ],
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        margin:
+                            const EdgeInsets.only(right: 8, left: 8, bottom: 8),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: const Image(
+                            image: AssetImage('assets/images/png/youtube 1.png')),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         )),
       ),

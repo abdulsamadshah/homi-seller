@@ -1,3 +1,5 @@
+import 'package:homlisellerapp/app/shared/utility.dart';
+
 class Validator {
   static String? validateEmail(String? value) {
     String patttern =
@@ -33,6 +35,39 @@ class Validator {
     return null;
   }
 
+  static String? validatepandCard(String? value) {
+    // String patttern = r'(^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$)';
+    // RegExp regExp = RegExp(patttern);
+    if (value == null || value.isEmpty) {
+      return "Please enter a valid Pan number";
+    }
+    return null;
+  }
+
+
+  static String? validateAadharcard(String? value) {
+    String pattern = r'^[2-9]{1}[0-9]{3}\\s[0-9]{4}\\s[0-9]{4}$';
+    RegExp regExp = RegExp(pattern);
+    if (value==null) {
+      return 'Please Enter Aadhar card Number';
+    } else if (!regExp.hasMatch(value)) {
+      return 'Please Enter Valid Aadhar card Number';
+    }
+    return "";
+  }
+
+  static String? validatePancard(String? value) {
+    String pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$';
+    RegExp regExp = RegExp(pattern);
+    if (value==null) {
+      return 'Please Enter Pancard Number';
+    } else if (!regExp.hasMatch(value)) {
+      return 'Please Enter Valid Pancard Number';
+    }
+    return "";
+  }
+
+
   static String? validatePassword(String? value) {
     if (value == null) {
       return 'Password is required';
@@ -47,15 +82,15 @@ class Validator {
     }
   }
 
-  static String? validatePancard(String? value) {
-    if (value == null) {
-      return "Please enter a valid Pancard";
-    } else if (value.isEmpty) {
-      return "Please enter a valid Pancard";
-    } else {
-      return null;
-    }
-  }
+  // static String? validatePancard(String? value) {
+  //   if (value == null) {
+  //     return "Please enter a valid Pancard";
+  //   } else if (value.isEmpty) {
+  //     return "Please enter a valid Pancard";
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   static String? validateIfsc(String? value) {
     if (value == null) {
@@ -97,12 +132,40 @@ class Validator {
     }
   }
 
-   static String? validateNumber(String? value) {
-  
+  static String? validateNumber(String? value) {
     if (value == null || value.isEmpty) {
-      return "Please enter a valid  number";
-    } 
-   
+      return "Please enter a valid Mobile number";
+    }
   }
+
+  static String? validatePincode(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a valid Mobile number";
+    }else if(value.length > 6){
+      return "Please enter the six digit number";
+    }else if(value.length < 6){
+      return "Please enter the six digit number";
+    }else{
+
+    }
+  }
+
+  static String? validateMobileNumber(String? value) {
+    if (value == null || value.isEmpty || value == "") {
+      Utility().myfluttertoast("Mobile Number is empty");
+    } else if (value.length >
+        10) {
+      Utility().myfluttertoast(
+          "Please enter the ten digit mobile Number");
+    } else if (value.length < 10) {
+      Utility().myfluttertoast(
+          "Please enter the ten digit mobile Number");
+    }else{
+      Utility().myfluttertoast("Enter The Valid Mobile Number");
+    }
+  }
+
+
+
 
 }

@@ -6,6 +6,7 @@ import '../routes/RoutesName.dart';
 import '../shared/utility.dart';
 class ShopdetailsController extends GetxController{
 
+  final GlobalKey<FormState> shopdetailsKey = GlobalKey<FormState>();
   TextEditingController companyname=TextEditingController();
   TextEditingController companypannumber=TextEditingController();
   TextEditingController companygstnumber=TextEditingController();

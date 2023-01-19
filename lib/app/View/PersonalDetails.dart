@@ -13,9 +13,14 @@ import '../View_Model/personaldetails_controller.dart';
 import '../constants/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/colors.dart';
+import '../shared/validator.dart';
+import 'ShopDetails.dart';
 import 'datepicker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
+import 'home_view.dart';
 
 void main() {
   runApp(const PersonalDetails());
@@ -60,103 +65,71 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String? birthDateInString;
   DateTime? birthDate;
+  bool showspinner = false;
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-          child: Container(
-            // height: Get.height * 0.1130,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    print("cliked");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyHomePages()));
-                  },
-                  child: Text(
-                    "Personal Details",
-                    style: TextStyle(
-                        fontFamily: PoppinsSemibold,
-                        fontSize: 20,
-                        color: Appcolors.textcolor),
-                  ),
-                ),
-                Text(
-                  "Complete your profile",
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontFamily: PoppinsRegular,
-                      fontSize: 20),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "Gender",
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black54,
-                      fontFamily: PoppinsMedium),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Color(0xffE9E4DA)),
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        child: RadioListTile(
-                          title: Text("Female"),
-                          value: "Female",
-                          groupValue: gender,
-                          onChanged: (value) {
-                            setState(() {
-                              gender = value.toString();
-                              print(gender);
-                            });
-                          },
-                        ),
+    return ModalProgressHUD(
+      inAsyncCall: showspinner,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+            child: Container(
+              // height: Get.height * 0.1130,
+              child: Form(
+                key: controller.personaldetailsKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        print("cliked");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePages()));
+                      },
+                      child: Text(
+                        "Personal Details",
+                        style: TextStyle(
+                            fontFamily: PoppinsSemibold,
+                            fontSize: 20,
+                            color: Appcolors.textcolor),
                       ),
-                      Divider(),
-                      Container(
-                        height: 55,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: RadioListTile(
-                            title: Text("Male"),
-                            value: "Male",
-                            groupValue: gender,
-                            onChanged: (value) {
-                              setState(() {
-                                gender = value.toString();
-                                print(gender);
-                              });
-                            },
-                          ),
-                        ),
+                    ),
+                    Text(
+                      "Complete your profile",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontFamily: PoppinsRegular,
+                          fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Gender",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black54,
+                          fontFamily: PoppinsMedium),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Color(0xffE9E4DA)),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      Divider(),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Container(
-                          height: 45,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        children: [
+                          Container(
                             child: RadioListTile(
-                              title: Text("Other"),
-                              value: "Other",
+                              title: Text("Female"),
+                              value: "Female",
                               groupValue: gender,
                               onChanged: (value) {
                                 setState(() {
@@ -166,299 +139,366 @@ class _MyHomePageState extends State<MyHomePage> {
                               },
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                InkWell(
-                  onTap: () async {
-                    DateTime? datepicked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2025));
-
-                    if (datepicked != null) {
-                      setState(() {
-                        dateofbirth =
-                            "${datepicked.day}/${datepicked.month}/${datepicked.year}";
-                        print(dateofbirth);
-                      });
-                    } else if (datepicked == "null" && datepicked == null) {
-                      setState(() {
-                        dateofbirth = "Select Date of Birth";
-                      });
-                    } else {
-                      setState(() {
-                        dateofbirth = "Select Date of Birth";
-                      });
-                    }
-                  },
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Container(
-                          height: 49,
-                          child: TextField(
-                            textAlignVertical: TextAlignVertical.bottom,
-                            enabled: false,
-                            decoration: InputDecoration(
-                              hintText: "${dateofbirth.toString()}",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(color: Colors.grey)),
+                          Divider(),
+                          Container(
+                            height: 55,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: RadioListTile(
+                                title: Text("Male"),
+                                value: "Male",
+                                groupValue: gender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    gender = value.toString();
+                                    print(gender);
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 275, top: 15),
-                        child: Icon(
-                          Icons.calendar_month_sharp,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Container(
-                    height: 49,
-                    child: TextField(
-                      controller: controller.pancardnumber,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      enabled: true,
-                      decoration: InputDecoration(
-                        hintText: "Personal Pan Number",
-                        labelText: "Personal Pan Number",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: Colors.grey)),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Container(
+                              height: 45,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: RadioListTile(
+                                  title: Text("Other"),
+                                  value: "Other",
+                                  groupValue: gender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      gender = value.toString();
+                                      print(gender);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Container(
-                          height: 49,
-                          child: TextField(
-                            textAlignVertical: TextAlignVertical.bottom,
-                            enabled: false,
-                            decoration: InputDecoration(
-                              hintText: "Personal Pan Photo",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(color: Colors.grey)),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        DateTime? datepicked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1920),
+                            lastDate: DateTime(2025));
+
+                        if (datepicked != null) {
+                          setState(() {
+                            dateofbirth =
+                                "${datepicked.day}/${datepicked.month}/${datepicked.year}";
+                            print(dateofbirth);
+                          });
+                        } else if (datepicked == "null" && datepicked == null) {
+                          setState(() {
+                            dateofbirth = "Select Date of Birth";
+                          });
+                        } else {
+                          setState(() {
+                            dateofbirth = "Select Date of Birth";
+                          });
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              height: 49,
+                              child: TextField(
+                                textAlignVertical: TextAlignVertical.bottom,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: "${dateofbirth.toString()}",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(color: Colors.grey)),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          selectpancarddialog(context);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 205, top: 12),
-                          child: Container(
-                            height: 30,
-                            width: 90,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              color: Color(0xfff5f5f5),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 275, top: 15),
+                            child: Icon(
+                              Icons.calendar_month_sharp,
+                              size: 30,
+                              color: Colors.grey,
                             ),
-                            child: Center(
-                                child: Text(
-                              "Choose File",
-                              style: TextStyle(color: Colors.black54),
-                            )),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Container(
-                    height: 49,
-                    child: TextField(
-                      controller: controller.addharcardnumber,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      enabled: true,
-                      decoration: InputDecoration(
-                        hintText: "Personal Aadhaar Number",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: Colors.grey)),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                InkWell(
-                  onTap: () {
-                    selectadharrfronimagedialog(context);
-                  },
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Container(
-                          height: 49,
-                          child: TextField(
-                            textAlignVertical: TextAlignVertical.bottom,
-                            enabled: false,
-                            decoration: InputDecoration(
-                              hintText: "Personal Aadhaar Photo",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(color: Colors.grey)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 205, top: 12),
-                        child: Container(
-                          height: 30,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            color: Color(0xfff5f5f5),
-                          ),
-                          child: Center(
-                              child: Text(
-                            "Choose File",
-                            style: TextStyle(color: Colors.black54),
-                          )),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                InkWell(
-                  onTap: () {
-                    selectadharrbackimagedialog(context);
-                  },
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Container(
-                          height: 49,
-                          child: TextField(
-                            textAlignVertical: TextAlignVertical.bottom,
-                            enabled: false,
-                            decoration: InputDecoration(
-                              hintText: "Back Aadhaar Photo",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  borderSide: BorderSide(color: Colors.grey)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 205, top: 12),
-                        child: Container(
-                          height: 30,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
-                            color: Color(0xfff5f5f5),
-                          ),
-                          child: Center(
-                              child: Text(
-                            "Choose File",
-                            style: TextStyle(color: Colors.black54),
-                          )),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                InkWell(
-                  onTap: ()async {
-
-
-                    print("Date of birhts:${selectadharrbackimagedialog}");
-                    print("id"+id.toString());
-
-                    if(controller.pancardnumber.text.toString() =="" && controller.pancardnumber.text.toString()=="null" && controller.pancardnumber.text.toString().isEmpty){
-                      Utility().myfluttertoast("Enter the Proper Pan No");
-                    }else if(controller.addharcardnumber.text.toString() =="" && controller.addharcardnumber.text.toString()=="null" && controller.addharcardnumber.text.toString().isEmpty){
-                      Utility().myfluttertoast("Enter the Proper Addhar No");
-                    }else{
-
-
-                      // Map personaldata = {
-                      //   'gender': gender.toString(),
-                      //   'dob': dateofbirth.toString(),
-                      //   'pan_no': controller.pancardnumber.text.toString(),
-                      //   'pan_image': "CJJvYBEeE/android.jpg",
-                      //   'aadhar_no': controller.addharcardnumber.text.toString(),
-                      //   'aadhar_front_image': "CJJvYBEeE/android.jpg",
-                      //   'aadhar_back_image': "CJJvYBEeE/android.jpg",
-                      //   'id': id.toString(),
-                      // };
-                      // print(personaldata);
-                      // controller.Personaldata(context, personaldata);
-
-                      uploadpersonaldetails();
-
-                    }
-
-                  },
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Appcolors.ButtonColor,
+                    SizedBox(
+                      height: 10,
                     ),
-                    child: Center(
-                        child: Text(
-                      "Next",
-                      style: TextStyle(
-                          fontFamily: PoppinsMedium,
-                          fontSize: 15,
-                          color: Colors.white),
-                    )),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 4),
+                    //   child: Container(
+                    //     height: 49,
+                    //     child: TextFormField(
+                    //       controller: controller.pancardnumber,
+                    //       textAlignVertical: TextAlignVertical.bottom,
+                    //       enabled: true,
+                    //       decoration: InputDecoration(
+                    //         hintText: "Personal Pan Number",
+                    //         labelText: "Personal Pan Number",
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(15.0),
+                    //             borderSide: BorderSide(color: Colors.grey)),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
-              ],
+
+                    Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                      child: Container(
+                        // height: 40,
+                        child: TextFormField(
+                          // validator: Validator.validatePancard,
+                          validator: Validator.validatepandCard,
+                          controller: controller.pancardnumber,
+                          decoration: InputDecoration(
+                            hintMaxLines: 10,
+                            contentPadding: EdgeInsets.only(left: 10, top: 6),
+                                    hintText: "Personal Pan Number",
+                                    labelText: "Personal Pan Number",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                          ),
+
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              height: 49,
+                              child: TextField(
+                                textAlignVertical: TextAlignVertical.bottom,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: "Personal Pan Photo",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(color: Colors.grey)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              selectpancarddialog(context);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 205, top: 12),
+                              child: Container(
+                                height: 30,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Color(0xfff5f5f5),
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  "Choose File",
+                                  style: TextStyle(color: Colors.black54),
+                                )),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 4),
+                    //   child: Container(
+                    //     height: 49,
+                    //     child: TextField(
+                    //       controller: controller.addharcardnumber,
+                    //       textAlignVertical: TextAlignVertical.bottom,
+                    //       enabled: true,
+                    //       decoration: InputDecoration(
+                    //         hintText: "Personal Aadhaar Number",
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(15.0),
+                    //             borderSide: BorderSide(color: Colors.grey)),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Container(
+                        // height: 40,
+                        child: TextFormField(
+                          // validator: Validator.validateAadharcard,
+                          validator: Validator.validateAadhar,
+                          controller: controller.addharcardnumber,
+                          decoration: InputDecoration(
+                            hintMaxLines: 10,
+                            contentPadding: EdgeInsets.only(left: 10, top: 6),
+                            hintText: "Personal Aadhaar Number",
+                            labelText: "Personal Aadhaar Number",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                          ),
+
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        selectadharrfronimagedialog(context);
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              height: 49,
+                              child: TextField(
+                                textAlignVertical: TextAlignVertical.bottom,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: "Personal Aadhaar Photo",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(color: Colors.grey)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 205, top: 12),
+                            child: Container(
+                              height: 30,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: Color(0xfff5f5f5),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                "Choose File",
+                                style: TextStyle(color: Colors.black54),
+                              )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        selectadharrbackimagedialog(context);
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              height: 49,
+                              child: TextField(
+                                textAlignVertical: TextAlignVertical.bottom,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText: "Back Aadhaar Photo",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide: BorderSide(color: Colors.grey)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 205, top: 12),
+                            child: Container(
+                              height: 30,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: Color(0xfff5f5f5),
+                              ),
+                              child: Center(
+                                  child: Text(
+                                "Choose File",
+                                style: TextStyle(color: Colors.black54),
+                              )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InkWell(
+                      onTap: ()async {
+
+                        if(controller.personaldetailsKey.currentState!.validate()){
+
+                          try{
+                            uploadpersonaldetails();
+                          }catch(e){
+                            print(e.toString());
+                          }
+                        }else{
+                          // Utility().myfluttertoast("Enter the Valid Data");
+                        }
+
+
+
+                      },
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.0),
+                          color: Appcolors.ButtonColor,
+                        ),
+                        child: Center(
+                            child: Text(
+                          "Next",
+                          style: TextStyle(
+                              fontFamily: PoppinsMedium,
+                              fontSize: 15,
+                              color: Colors.white),
+                        )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -467,7 +507,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> uploadpersonaldetails() async {
-
+   setState(() {
+     showspinner=true;
+   });
     SharedPreferences userpref =
     await SharedPreferences.getInstance();
     setState(() {
@@ -521,13 +563,41 @@ class _MyHomePageState extends State<MyHomePage> {
     print("All parametres"+request.toString());
 
     var response = await request.send();
+    print(response.toString());
+
+
+    var responseString = await response.stream.bytesToString();
+
     print(response.stream.toString());
     if (response.statusCode == 200) {
-      print('Personal Detail Uploaded Successfully');
-      // Utility().myfluttertoast(value['msg']);
-      Navigator.pushNamed(context, RoutesName.ShopDetails);
-      Utility().myfluttertoast("Personal Detail Uploaded Successfully");
+      final decodedMap = json.decode(responseString);
+      if(decodedMap['status'] == "true"){
+        print(""+decodedMap['msg']);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopDetails()));
+        Utility().myfluttertoast("Personal Detail Uploaded Successfully");
+        setState(() {
+          showspinner=false;
+        });
+      }else{
+        print("somethong wrong personal details");
+        setState(() {
+          showspinner=false;
+        });
+      }
+
+
+
+
     } else {
+      setState(() {
+        showspinner=false;
+      });
+      final decodedMap = json.decode(responseString);
+      print(""+decodedMap['message']);
+      print(""+decodedMap['errors']['gender']);
+      print(""+decodedMap['errors']['pan_no']);
+      print(""+decodedMap['errors']['aadhar_no']);
+
       print('failed');
       Utility().myfluttertoast("Some thing wrong data");
     }
@@ -612,9 +682,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
+        showspinner=true;
         addharcardfronimg = File(pickfile.path);
         Utility().myfluttertoast("Adhaar Uploaded Successfully");
+        showspinner=false;
       } else {
+        showspinner=false;
         Utility().myfluttertoast("No Image Selected");
       }
     });

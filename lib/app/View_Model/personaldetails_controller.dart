@@ -6,6 +6,7 @@ import '../routes/RoutesName.dart';
 import '../shared/utility.dart';
 
 class PersonalDetailscontroller extends GetxController {
+  final GlobalKey<FormState> personaldetailsKey = GlobalKey<FormState>();
   TextEditingController pancardnumber = TextEditingController();
   TextEditingController addharcardnumber = TextEditingController();
 

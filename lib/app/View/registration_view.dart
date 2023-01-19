@@ -18,6 +18,8 @@ import '../constants/fonts.dart';
 import '../shared/utility.dart';
 import 'package:get/get.dart';
 
+import '../shared/validator.dart';
+
 class RegistrationView extends StatefulWidget {
   const RegistrationView({Key? key}) : super(key: key);
 
@@ -39,8 +41,6 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
 
   bool disablesendmobileotpbutton = false;
   bool disablesendemailpbutton = false;
-
-
 
   @override
   void codeUpdated() {
@@ -87,7 +87,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
             _mobileresend = !_mobileresend;
             _mobiletimervisible = false;
             _start = 30;
-            _mobileresend=true;
+            _mobileresend = true;
           });
         } else {
           setState(() {
@@ -113,7 +113,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
             _emailresend = !_emailresend;
             _emailtimervisible = false;
             _startemail = 30;
-            _emailresend=true;
+            _emailresend = true;
           });
         } else {
           setState(() {
@@ -171,18 +171,25 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                 const SizedBox(
                   height: 50,
                 ),
-                TextFieldWidget(
-                  controller: controller.first_name_controller,
-                  hintText: 'Nikhil',
-                  labelText: 'First Name',
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    // height: 40,
+
+                    child: TextFormField(
+                      validator: Validator.validateName,
+                      controller: controller.first_name_controller,
+                      decoration: InputDecoration(
+                        hintMaxLines: 10,
+                        contentPadding: EdgeInsets.only(left: 10, top: 6),
+                        hintText: 'Nikhil',
+                        labelText: 'First Name',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0)),
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(
-                  height: 26,
-                ),
-                TextFieldWidget(
-                    controller: controller.last_name_controller,
-                    hintText: 'Gupta',
-                    labelText: 'Last Name'),
                 const SizedBox(
                   height: 26,
                 ),
@@ -190,23 +197,47 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: Container(
-                    height: 40,
+                    // height: 40,
+
+                    child: TextFormField(
+                      validator: Validator.validateName,
+                      controller: controller.last_name_controller,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(left: 10, top: 6),
+                        hintText: 'Gupta',
+                        labelText: 'Last Name',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0)),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 26,
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    // height: 40,
                     child: Stack(
                       children: [
-                        TextField(
+                        TextFormField(
+                          validator: Validator.validateNumber,
                           controller: controller.mobile_controller,
                           decoration: InputDecoration(
-                            hintText: "Mobile Number",
-                            labelText: "Mobile Number",
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
+                            hintText: 'Mobile Number',
+                            labelText: 'Mobile Number',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0)),
+                                borderRadius: BorderRadius.circular(25.0)),
                           ),
                         ),
                         AbsorbPointer(
                           absorbing: disablesendmobileotpbutton,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 240, top: 6),
+                            padding: const EdgeInsets.only(left: 240, top: 10),
                             child: InkWell(
                               onTap: () async {
                                 if (controller.mobile_controller.text
@@ -253,7 +284,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                     setState(() {
                                       _motpvisible = !_motpvisible;
                                       disablesendmobileotpbutton = true;
-                                      _mobiletimervisible=true;
+                                      _mobiletimervisible = true;
                                     });
                                     startTimer();
 
@@ -267,7 +298,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                 }
                               },
                               child: Container(
-                                height: 25,
+                                height: 30,
                                 width: 70,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
@@ -374,7 +405,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                           setState(() {
                             setState(() {
                               _motpvisible = _motpvisible;
-                              _mobiletimervisible=true;
+                              _mobiletimervisible = true;
                             });
 
                             startTimer();
@@ -403,29 +434,41 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 15),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
                   child: Container(
-                    height: 40,
+                    // height: 40,
                     child: Stack(
                       children: [
-                        TextField(
+                        TextFormField(
+                          validator: Validator.validateEmail,
                           controller: controller.email_controller,
                           decoration: InputDecoration(
-                            hintText: "Email",
-                            labelText: "Email",
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
+                            hintText: 'Email',
+                            labelText: 'Email',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15.0)),
+                                borderRadius: BorderRadius.circular(25.0)),
                           ),
                         ),
+                        // TextField(
+                        //   controller: controller.email_controller,
+                        //   decoration: InputDecoration(
+                        //     hintText: "Email",
+                        //     labelText: "Email",
+                        //     contentPadding: EdgeInsets.only(left: 10, top: 6),
+                        //     border: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(15.0)),
+                        //   ),
+                        // ),
                         AbsorbPointer(
                           absorbing: disablesendemailpbutton,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 240, top: 6),
+                            padding: const EdgeInsets.only(left: 240, top: 10),
                             child: InkWell(
                               onTap: () async {
                                 bool emailidvalidate = EmailValidator.validate(
-                                    controller.email_controller.text.toString());
+                                    controller.email_controller.text
+                                        .toString());
                                 if (controller.mobile_controller.text
                                             .toString() ==
                                         null ||
@@ -462,7 +505,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                     setState(() {
                                       _visible = !_visible;
                                       disablesendemailpbutton = true;
-                                      _emailtimervisible=true;
+                                      _emailtimervisible = true;
                                     });
                                     startTimeremail();
 
@@ -473,7 +516,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                                 }
                               },
                               child: Container(
-                                height: 25,
+                                height: 30,
                                 width: 70,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
@@ -568,7 +611,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                             .then((value) {
                           setState(() {
                             // _visible = !_visible;
-                            _emailtimervisible=true;
+                            _emailtimervisible = true;
                           });
                           startTimeremail();
 
@@ -601,30 +644,43 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     },
                     child: InkWell(
                       onTap: () async {
-                        SharedPreferences userpref =
-                            await SharedPreferences.getInstance();
-                        setState(() {
-                          id = userpref.getString('id') ?? '';
-                          emailotp = userpref.getString('email_otp') ?? '';
-                          mobileotp = userpref.getString('phone_otp') ?? '';
-                        });
-                        print("My id${id}");
-                        print("My id${emailotp}");
-                        print("My id${mobileotp}");
-                        print("Mobile Otp data" + mobileotps.toString());
+                        if (controller.registerKey.currentState!.validate()) {
+                          try {
+                            SharedPreferences userpref =
+                                await SharedPreferences.getInstance();
+                            setState(() {
+                              id = userpref.getString('id') ?? '';
+                              emailotp = userpref.getString('email_otp') ?? '';
+                              mobileotp = userpref.getString('phone_otp') ?? '';
+                            });
+                            print("My id${id}");
+                            print("My id${emailotp}");
+                            print("My id${mobileotp}");
+                            print("Mobile Otp data" + mobileotps.toString());
 
-                        Map Registerparam = {
-                          'first_name': controller.first_name_controller.text.toString(),
-                          'last_name': controller.last_name_controller.text.toString(),
-                          'phone': controller.mobile_controller.text.toString(),
-                          'email': controller.email_controller.text.toString(),
-                          'email_otp': emailotp.toString(),
-                          'phone_otp': mobileotp.toString(),
-                          'id': id.toString(),
-                        };
-                        print("Register data:${Registerparam}");
-                        controller.Register(context, Registerparam,
-                            mobileotps.toString(), emailotps.toString());
+                            Map Registerparam = {
+                              'first_name': controller
+                                  .first_name_controller.text
+                                  .toString(),
+                              'last_name': controller.last_name_controller.text
+                                  .toString(),
+                              'phone':
+                                  controller.mobile_controller.text.toString(),
+                              'email':
+                                  controller.email_controller.text.toString(),
+                              'email_otp': emailotp.toString(),
+                              'phone_otp': mobileotp.toString(),
+                              'id': id.toString(),
+                            };
+                            print("Register data:${Registerparam}");
+                            controller.Register(context, Registerparam,
+                                mobileotps.toString(), emailotps.toString());
+                          } catch (e) {
+                            print(e.toString());
+                          }
+                        } else {
+                          // Utility().myfluttertoast("Enter the Valid Data");
+                        }
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),

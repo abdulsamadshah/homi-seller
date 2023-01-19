@@ -1,5 +1,6 @@
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:homlisellerapp/app/Network/apiServices/Baseapiservices.dart';
+import 'package:homlisellerapp/app/shared/utility.dart';
 
 import '../apiServices/NetworkApiservices.dart';
 import '../apiServices/apiurl.dart';
@@ -14,9 +15,15 @@ class Registerrepo {
   }
 
   Future<dynamic> Registerationrep(dynamic data) async {
-    final response =
-        await _baseapiservices.PostapiServices(Apiurl.Signupurl, data);
-    return response;
+    try{
+      final response =
+      await _baseapiservices.PostapiServices(Apiurl.Signupurl, data);
+      return response;
+    }
+    catch(e){
+      Utility().myfluttertoast("Enter the Valid Date");
+    }
+
   }
 
   Future<dynamic> loginotp(dynamic data) async {

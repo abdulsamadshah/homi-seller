@@ -12,6 +12,7 @@ import '../shared/utility.dart';
 
 class LoginController extends GetxController {
   //TODO: Implement LoginController
+  final GlobalKey<FormState> loginKey = GlobalKey<FormState>();
   TextEditingController email_controller = TextEditingController();
   Registerrepo repo = Registerrepo();
   final count = 0.obs;
