@@ -2,12 +2,67 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:homlisellerapp/app/View/edit_profile_one.dart';
+import 'package:homlisellerapp/app/constants/colors.dart';
+import 'package:homlisellerapp/app/constants/fonts.dart';
 
 import 'package:homlisellerapp/app/shared/color.dart';
 import 'package:homlisellerapp/app/shared/widgets/divider_widget.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
+
+
+  Future<void> showdocumentviewdialog(BuildContext context) async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+
+
+          //Dialog box with customer
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              content: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Container(
+
+                    child: Container(
+                      height: 220,
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Image.network('https://english.cdn.zeenews.com/sites/default/files/styles/zm_700x400/public/2021/10/22/981740-untitled-design-2021-10-22t213922.907.png',height: 200,),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 165),
+                                child: Container(
+                                  height: 40,
+                                  color: Appcolors.ButtonColor,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('View',style: TextStyle(fontFamily: PoppinsMedium),),
+                                      SizedBox(width: 60,),
+                                      // Divider(height: 50,),
+                                      Text('Update',style: TextStyle(fontFamily: PoppinsMedium),),
+
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+
+                        ],
+                      ),
+
+                    ),
+
+                ),
+              ),
+            );
+          });
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,28 +220,33 @@ class ProfileView extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(
-                width: 50,
-              ),
-              Icon(
-                Icons.document_scanner,
-                color: FixedColors.purple,
-                size: 30,
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              const Text(
-                'Documents',
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400),
-              )
-            ],
+          InkWell(
+            onTap: (){
+              showdocumentviewdialog(context);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 50,
+                ),
+                Icon(
+                  Icons.document_scanner,
+                  color: FixedColors.purple,
+                  size: 30,
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                const Text(
+                  'Documents',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400),
+                )
+              ],
+            ),
           ),
           const SizedBox(
             height: 15,
@@ -278,3 +338,11 @@ class CurveClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
+
+
+
+
+
+
+
+

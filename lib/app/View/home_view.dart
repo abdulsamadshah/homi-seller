@@ -20,7 +20,7 @@ class _HomeViewState extends State<HomeView> {
     {'pag': const MenuView()},
     {'pag': const ProfileView()},
     {'pag': const KhanaFoodOneView()},
-    {'pag': const AnalyticsView()},
+    {'pag':  AnalyticsView()},
   ];
 
   void _selectedPage(int index) {

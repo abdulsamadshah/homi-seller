@@ -177,6 +177,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     // height: 40,
 
                     child: TextFormField(
+                      keyboardType: TextInputType.name,
                       validator: Validator.validateName,
                       controller: controller.first_name_controller,
                       decoration: InputDecoration(
@@ -200,6 +201,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     // height: 40,
 
                     child: TextFormField(
+                      keyboardType: TextInputType.name,
                       validator: Validator.validateName,
                       controller: controller.last_name_controller,
                       decoration: InputDecoration(
@@ -224,6 +226,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     child: Stack(
                       children: [
                         TextFormField(
+                          keyboardType: TextInputType.phone,
                           validator: Validator.validateNumber,
                           controller: controller.mobile_controller,
                           decoration: InputDecoration(
@@ -440,6 +443,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                     child: Stack(
                       children: [
                         TextFormField(
+                          keyboardType: TextInputType.emailAddress,
                           validator: Validator.validateEmail,
                           controller: controller.email_controller,
                           decoration: InputDecoration(

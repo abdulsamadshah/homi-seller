@@ -15,7 +15,7 @@ void main() {
         
         debugShowCheckedModeBanner: false,
         title: "homlisellerapp",
-        initialRoute: RoutesName.Login,
+        initialRoute: RoutesName.HOME,
         onGenerateRoute: Routes.getroutes,
 
         

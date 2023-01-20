@@ -82,6 +82,21 @@ class Validator {
     }
   }
 
+
+  static String? validateFffsairegisterationnumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a valid FSSAI Registration Number";
+    }else if(value.length > 14){
+      return "Please enter the 14 digit number";
+    }else if(value.length < 14){
+      return "Please enter the 14 digit number";
+    }else if(value.contains(' ')){
+      return 'FSSAI Registration Number should not contain space';
+    }else{
+
+    }
+  }
+
   // static String? validatePancard(String? value) {
   //   if (value == null) {
   //     return "Please enter a valid Pancard";
@@ -164,6 +179,20 @@ class Validator {
       Utility().myfluttertoast("Enter The Valid Mobile Number");
     }
   }
+  //
+  // String validatepannumbers(String value) {
+  //
+  //   // regex = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
+  //   String pattern = '[A-Z]{5}[0-9]{4}[A-Z]{1}';
+  //   RegExp regExp = RegExp(pattern);
+  //   if (value.isEmpty) {
+  //     return 'Please Enter ';
+  //   } else if (!regExp.hasMatch(value)) {
+  //     return 'Please Enter valid IFSC';
+  //   }
+  //   return "";
+
+
 
 
 

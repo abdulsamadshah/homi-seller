@@ -388,7 +388,8 @@ class _ShopDetailssState extends State<ShopDetails> {
 
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
+                          keyboardType: TextInputType.number,
+                          validator: Validator.validateFffsairegisterationnumber,
                             controller: controller.companyfssainumber,
                           decoration: InputDecoration(
                             hintMaxLines: 10,

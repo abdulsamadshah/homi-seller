@@ -16,6 +16,7 @@ import 'package:sms_autofill/sms_autofill.dart';
 
 import '../View_Model/login_controller.dart';
 import '../shared/validator.dart';
+import 'datepicker.dart';
 import 'home_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -104,15 +105,20 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 128,
-                      backgroundColor: Colors.transparent,
-                      child: Image(
-                        image: AssetImage('assets/images/png/homilylogo.png'),
-                        fit: BoxFit.fill,
+                InkWell(
+                  onTap: (){
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>allscreeen()));
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(top: 25),
+                    child: Center(
+                      child: CircleAvatar(
+                        radius: 128,
+                        backgroundColor: Colors.transparent,
+                        child: Image(
+                          image: AssetImage('assets/images/png/homilylogo.png'),
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
                   ),
@@ -476,10 +482,10 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
             data['data']['email_otp'].toString(), loginmono);
         Utility().myfluttertoast("Send Otp Successfully");
       } else {
-        Utility().myfluttertoast("Please Enter Valid Email Id");
+        Utility().myfluttertoast("Please Enter Valid Mob/Email Id");
       }
     } else {
-      Utility().myfluttertoast("Please Enter Valid Email Id");
+      Utility().myfluttertoast("Please Enter Valid Mob/Email Id");
     }
   }
 }

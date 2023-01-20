@@ -3,6 +3,7 @@ import 'package:get/route_manager.dart';
 
 import '../View/Login_view.dart';
 import '../View/PersonalDetails.dart';
+import '../View/Sales-Report.dart';
 import '../View/ShopDetails.dart';
 import '../View/home_view.dart';
 import '../View/registration_view.dart';
@@ -22,6 +23,9 @@ class Routes{
 
         case RoutesName.ShopDetails:
         return MaterialPageRoute(builder: (context)=>ShopDetails());
+
+        case RoutesName.SalesReport:
+        return MaterialPageRoute(builder: (context)=>SalesReport());
 
 
       default:

@@ -84,11 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        print("cliked");
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MyHomePages()));
+                        // print("cliked");
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => MyHomePages()));
                       },
                       child: Text(
                         "Personal Details",
@@ -189,8 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         DateTime? datepicked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime(1920),
-                            lastDate: DateTime(2025));
+                            firstDate: DateTime(1930),
+                            lastDate: DateTime(2024));
 
                         if (datepicked != null) {
                           setState(() {
@@ -221,7 +221,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   hintText: "${dateofbirth.toString()}",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(color: Colors.grey)),
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
                                 ),
                               ),
                             ),
@@ -259,9 +260,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     //   ),
                     // ),
 
-
                     Padding(
-                        padding: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.only(top: 4),
                       child: Container(
                         // height: 40,
                         child: TextFormField(
@@ -271,11 +271,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                    hintText: "Personal Pan Number",
-                                    labelText: "Personal Pan Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Personal Pan Number",
+                            labelText: "Personal Pan Number",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -298,7 +298,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   hintText: "Personal Pan Photo",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(color: Colors.grey)),
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
                                 ),
                               ),
                             ),
@@ -308,7 +309,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               selectpancarddialog(context);
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 205, top: 12),
+                              padding:
+                                  const EdgeInsets.only(left: 205, top: 12),
                               child: Container(
                                 height: 30,
                                 width: 90,
@@ -361,9 +363,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
                             hintText: "Personal Aadhaar Number",
                             labelText: "Personal Aadhaar Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -388,7 +390,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   hintText: "Personal Aadhaar Photo",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(color: Colors.grey)),
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
                                 ),
                               ),
                             ),
@@ -432,7 +435,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   hintText: "Back Aadhaar Photo",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15.0),
-                                      borderSide: BorderSide(color: Colors.grey)),
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
                                 ),
                               ),
                             ),
@@ -460,21 +464,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 20,
                     ),
                     InkWell(
-                      onTap: ()async {
-
-                        if(controller.personaldetailsKey.currentState!.validate()){
-
-                          try{
+                      onTap: () async {
+                        if (controller.personaldetailsKey.currentState!
+                            .validate()) {
+                          try {
                             uploadpersonaldetails();
-                          }catch(e){
+                          } catch (e) {
                             print(e.toString());
                           }
-                        }else{
+                        } else {
                           // Utility().myfluttertoast("Enter the Valid Data");
                         }
-
-
-
                       },
                       child: Container(
                         height: 48,
@@ -495,7 +495,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       height: 30,
                     ),
-
                   ],
                 ),
               ),
@@ -507,11 +506,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> uploadpersonaldetails() async {
-   setState(() {
-     showspinner=true;
-   });
-    SharedPreferences userpref =
-    await SharedPreferences.getInstance();
+    setState(() {
+      showspinner = true;
+    });
+    SharedPreferences userpref = await SharedPreferences.getInstance();
     setState(() {
       id = userpref.getString('id') ?? '';
     });
@@ -521,8 +519,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // pancardstream.cast();
     // var parncardlength = await pancimage!.length();
 
-
-
     // var addhardcardfrongstream = new http.ByteStream(addharcardfronimg!.openRead());
     // pancardstream.cast();
     // var addharfrongncardlength = await addharcardfronimg!.length();
@@ -531,7 +527,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // pancardstream.cast();
     // var addharbackgncardlength = await addharcardfrontback!.length();
 
-    var uri = Uri.parse('http://homliadmin.globusachievers.com/api/seller-personal');
+    var uri =
+        Uri.parse('http://homliadmin.globusachievers.com/api/seller-personal');
 
     var request = new http.MultipartRequest('POST', uri);
 
@@ -540,13 +537,16 @@ class _MyHomePageState extends State<MyHomePage> {
     request.fields['pan_no'] = controller.pancardnumber.text.toString();
     request.fields['aadhar_no'] = controller.addharcardnumber.text.toString();
     request.fields['id'] = id.toString();
-    var pancardimage = await http.MultipartFile.fromPath("pan_image", pancimage!.path);
+    var pancardimage =
+        await http.MultipartFile.fromPath("pan_image", pancimage!.path);
     request.files.add(pancardimage);
 
-    var addharfrongcardmultiport = await http.MultipartFile.fromPath("aadhar_front_image", addharcardfrontback!.path);
+    var addharfrongcardmultiport = await http.MultipartFile.fromPath(
+        "aadhar_front_image", addharcardfrontback!.path);
     request.files.add(addharfrongcardmultiport);
 
-    var addharbackcardmultiport = await http.MultipartFile.fromPath("aadhar_back_image", addharcardfrontback!.path);
+    var addharbackcardmultiport = await http.MultipartFile.fromPath(
+        "aadhar_back_image", addharcardfrontback!.path);
     request.files.add(addharbackcardmultiport);
 
     // var pancardmultiport = new http.MultipartFile('pan_image', pancardstream, parncardlength);
@@ -559,47 +559,37 @@ class _MyHomePageState extends State<MyHomePage> {
     // var addharbackcardmultiport = new http.MultipartFile('aadhar_back_image', addhardcardbackstream, addharbackgncardlength);
     // request.files.add(addharbackcardmultiport);
 
-
-    print("All parametres"+request.toString());
+    print("All parametres" + request.toString());
 
     var response = await request.send();
     print(response.toString());
-
 
     var responseString = await response.stream.bytesToString();
 
     print(response.stream.toString());
     if (response.statusCode == 200) {
       final decodedMap = json.decode(responseString);
-      if(decodedMap['status'] == "true"){
-        print(""+decodedMap['msg']);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ShopDetails()));
+      if (decodedMap['status'] == "true") {
+        print("" + decodedMap['msg']);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ShopDetails()));
         Utility().myfluttertoast("Personal Detail Uploaded Successfully");
         setState(() {
-          showspinner=false;
+          showspinner = false;
         });
-      }else{
+      } else {
         print("somethong wrong personal details");
         setState(() {
-          showspinner=false;
+          showspinner = false;
         });
       }
-
-
-
-
     } else {
       setState(() {
-        showspinner=false;
+        showspinner = false;
       });
-      final decodedMap = json.decode(responseString);
-      print(""+decodedMap['message']);
-      print(""+decodedMap['errors']['gender']);
-      print(""+decodedMap['errors']['pan_no']);
-      print(""+decodedMap['errors']['aadhar_no']);
 
       print('failed');
-      Utility().myfluttertoast("Some thing wrong data");
+      Utility().myfluttertoast("Please enter the valid details");
     }
   }
 
@@ -682,12 +672,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         addharcardfronimg = File(pickfile.path);
         Utility().myfluttertoast("Adhaar Uploaded Successfully");
-        showspinner=false;
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
