@@ -1,170 +1,244 @@
+import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:homlisellerapp/app/constants/fonts.dart';
-import 'package:pie_chart/pie_chart.dart';
-
-import '../shared/widgets/sidemenu.dart';
+import 'package:homlisellerapp/app/shared/widgets/analytics_order.dart';
+import 'package:homlisellerapp/app/shared/widgets/multipledatepicker.dart';
+import 'package:homlisellerapp/app/shared/widgets/sidemenu.dart';
 
 class AnalyticsView extends StatelessWidget {
-   AnalyticsView({super.key});
-
-   // final gradientList = <List<Color>>[
-   //   [
-   //     Color.fromRGBO(223, 250, 92, 1),
-   //     Color.fromRGBO(129, 250, 112, 1),
-   //   ],
-   //   [
-   //     Color.fromRGBO(129, 182, 205, 1),
-   //     Color.fromRGBO(91, 253, 199, 1),
-   //   ],
-   //   [
-   //     Color.fromRGBO(175, 63, 62, 1.0),
-   //     Color.fromRGBO(254, 154, 92, 1),
-   //   ]
-   // ];
-
-  Map<String, double> dataMap = {
-    "Buttermilk": 3,
-    "Amti": 4,
-    "Solkadhi": 4,
-
-
-  };
-
-
+  const AnalyticsView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final data = [
+      {
+        'order': 'A',
+        'percentage': 40,
+      },
+      {
+        'order': 'B',
+        'percentage': 60,
+      }
+    ];
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           iconTheme: const IconThemeData(color: Colors.black),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 20,top: 15),
-              child: Text('Analytics',style: TextStyle(fontFamily: PoppinsMedium,fontSize: 16,color: Color(0xff1E1E1E)),),
-
+              padding: const EdgeInsets.only(right: 20, top: 20),
+              child: Text(
+                'Analytics',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
           ],
         ),
         drawer: const Sidemenu(),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30),
-        child: Container(
-          child: Column(
-            children: [
-
-              PieChart(
-                // gradientList: gradientList,
-                // emptyColorGradient: [
-                //   Color(0xff6c5ce7),
-                //   Colors.blue,
-                // ],
-                dataMap: dataMap,
-                animationDuration: Duration(milliseconds: 800),
-                chartLegendSpacing: 32,
-                chartRadius: MediaQuery.of(context).size.width / 1.3,
-                // colorList: colorList,
-                initialAngleInDegree: 0,
-
-                chartType: ChartType.disc,
-                ringStrokeWidth: 32,
-
-                // centerText: "HYBRID",
-                legendOptions: LegendOptions(
-                  showLegendsInRow: true,
-                  legendPosition: LegendPosition.bottom,
-                  showLegends: true,
-                  // legendShape: Boxt,
-                  legendTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.arrow_back_ios,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                      Text('Back'),
+                    ],
                   ),
                 ),
-                chartValuesOptions: ChartValuesOptions(
-                  showChartValueBackground: true,
-                  showChartValues: false,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: true,
-                  decimalPlaces: 1,
-                ),
-                // gradientList: ---To add gradient colors---
-                // emptyColorGradient: ---Empty Color gradient---
-              ),
-
-              SizedBox(height: 30,),
-              Padding(
-                padding: const EdgeInsets.only(right: 75),
-                child: Text('Total  Product Sale Report',style: TextStyle(fontSize: 12,color: Colors.black,fontFamily: PoppinsSemibold),),
-              ),
-
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70),
-                child: Divider(height: 1,color: Colors.black,),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70,top: 5),
-                child: Row(
+                SizedBox(height: 15),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('order list ',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsSemibold),),
-                    Text('Sales',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsSemibold),),
+                    AnalyticsOrder(
+                      icon: Icon(
+                        Icons.savings,
+                        color: Color(0xffF8F8F8),
+                      ),
+                      title: '100K',
+                      subtitle: 'Monthly Earning',
+                    ),
+                    AnalyticsOrder(
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: Color(0xffF8F8F8),
+                      ),
+                      title: '100',
+                      subtitle: 'Monthly Order',
+                    ),
                   ],
                 ),
-
-              ),
-              SizedBox(height: 5,),
-
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70),
-                child: Divider(height: 1,color: Colors.black,),
-              ),
-              SizedBox(height: 10,),
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70,top: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('Buttermilk',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
-                    Text('300',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
+                    Text(
+                      'Sales Report',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    MultipleDatePicker(),
+                    Text('To'),
+                    MultipleDatePicker(),
                   ],
                 ),
+                SizedBox(height: 20),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Stack(
+                    children: [
+                      DChartPie(
+                        data: data.map((e) {
+                          return {
+                            'domain': e['order'],
+                            'measure': e['percentage']
+                          };
+                        }).toList(),
+                        fillColor: (pieData, index) {
+                          switch (pieData['domain']) {
+                            case 'A':
+                              return Colors.blue;
+                            case 'B':
+                              return Colors.orange;
+                          }
+                        },
+                        labelPosition: PieLabelPosition.auto,
+                        labelColor: Colors.black,
+                        labelFontSize: 14,
+                        labelLineColor: Colors.amber,
+                        labelLineThickness: 2,
+                        labelLinelength: 10,
+                        labelPadding: 5,
+                        pieLabel: (Map<dynamic, dynamic> pieData, int? index) {
+                          return "Order" +
+                              " " +
+                              pieData['domain'] +
+                              '\n' +
+                              '(' +
+                              pieData['measure'].toString() +
+                              '%' +
+                              ')';
+                        },
+                        showLabelLine: true,
+                        donutWidth: 25,
+                      ),
+                      Center(
+                        child: Text('Total Sales'),
+                      ),
+                    ],
+                  ),
+                ),
 
-              ),
-              SizedBox(height: 10,),
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70,top: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // PieWidget(),
+                SizedBox(height: 20),
+                Divider(
+                  color: Color(0xff858585),
+                  thickness: 2,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Order List',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Column(
                   children: [
-                    Text('Amti',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
-                    Text('100',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
+                    Material(
+                      borderRadius: BorderRadius.circular(10),
+                      elevation: 10,
+                      shadowColor: Colors.white,
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        leading: Text(
+                          'Order A',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        title: Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xff2B87E3),
+                          ),
+                        ),
+                        trailing: Text(
+                          '400',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Material(
+                      borderRadius: BorderRadius.circular(10),
+                      elevation: 10,
+                      shadowColor: Colors.white,
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        leading: Text(
+                          'Order B',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        title: Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xffEBA10F),
+                          ),
+                        ),
+                        trailing: Text(
+                          '600',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
-
-              ),
-
-              SizedBox(height: 10,),
-              Padding(
-                padding: const EdgeInsets.only(left: 70,right: 70,top: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Solkadhi',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
-                    Text('600',style: TextStyle(fontSize: 16,color: Colors.black,fontFamily: PoppinsMedium),),
-                  ],
-                ),
-
-              ),
-
-            ],
+              ],
+            ),
           ),
-        ),
-      )
-
-
-    );
+        ));
   }
 }
