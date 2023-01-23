@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Network/Repositary/Register.dart';
 import '../routes/RoutesName.dart';
@@ -17,6 +18,8 @@ class ShopdetailsController extends GetxController{
   TextEditingController companyaddress=TextEditingController();
   TextEditingController companyaddress2=TextEditingController();
   TextEditingController companypincode=TextEditingController();
+
+
   @override
   void onClose() {
     // TODO: implement onClose
@@ -63,6 +66,18 @@ class ShopdetailsController extends GetxController{
       print(error.toString());
       print("this working wrong");
     });
+  }
+
+  Future<bool> saveStateId(String stateid) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setString("StateId", stateid);
+    return true;
+  }
+
+  Future<bool> saveCityId(String Cityid) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setString("CityId", Cityid);
+    return true;
   }
 
 }

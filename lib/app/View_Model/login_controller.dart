@@ -16,7 +16,7 @@ class LoginController extends GetxController {
   TextEditingController email_controller = TextEditingController();
   Registerrepo repo = Registerrepo();
   final count = 0.obs;
-  late Timer _timer;
+
 
 
   @override

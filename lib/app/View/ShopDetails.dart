@@ -15,18 +15,44 @@ import '../routes/RoutesName.dart';
 import '../shared/color.dart';
 import '../shared/validator.dart';
 import 'home_view.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import '../service/dropdown.service.dart';
 
-class ShopDetails extends StatefulWidget {
-  const ShopDetails({Key? key}) : super(key: key);
 
-  @override
-  State<ShopDetails> createState() => _ShopDetailssState();
+void main() {
+  runApp(const ShopDetails());
 }
 
-class _ShopDetailssState extends State<ShopDetails> {
+class ShopDetails extends StatelessWidget {
+  const ShopDetails({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: true,
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+      ),
+      home: const MyHomePage(title: 'Shop Details'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+ String? yesandno='Yes';
   ShopdetailsController controller = ShopdetailsController();
 
-  String? gender;
+  String? fssaivaliditydate;
   var pickImage = ImagePicker();
   File? companypanphoto,
       companygstphoto,
@@ -35,39 +61,14 @@ class _ShopDetailssState extends State<ShopDetails> {
   String? birthDateInString;
   DateTime? birthDate;
 
-  String Statevalue = 'Select State';
-  var State = [
-    'Select State',
-    'Andhra Pradesh',
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-  ];
-  var Statename;
+  dynamic stateid;
+  dynamic stateitemselected;
 
-  String Cityvalue = 'Select City';
-  var City = [
-    'Select City',
-    'Mumbai',
-    "Delhi",
-    "Bangalore",
-    "Hyderabad",
-  ];
-  var Cityname;
+  dynamic Cityid;
+  dynamic Cityitemselected;
 
-  String Districtvalue = 'Select District';
-  var District = [
-    'Select District',
-    'Thane',
-    "Palghar",
-    "Raigad",
-    "Ratnagiri",
-  ];
-  var Districtname;
-
+  dynamic Districtid;
+  dynamic Districtitemselected;
   String? id;
 
   @override
@@ -81,10 +82,23 @@ class _ShopDetailssState extends State<ShopDetails> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     id = pref.getString('id') ?? '';
   }
+
   bool showspinner = false;
 
-  @override
+  bool companypanphotouploaded = false;
+  bool companypanphotos = true;
+
+  bool companygstphotouploaded = false;
+  bool companygstphotos = true;
+
+  bool companyfssaicertificatephotouploaded = false;
+  bool companyfssaicertificatephotos = true;
+
+  bool companybrandlogophotouploaded = false;
+  bool companybrandlogophotos = true;
+
   Widget build(BuildContext context) {
+
     return ModalProgressHUD(
       inAsyncCall: showspinner,
       child: Scaffold(
@@ -95,7 +109,7 @@ class _ShopDetailssState extends State<ShopDetails> {
             child: Container(
               // height: Get.height * 0.930,
               child: Form(
-                key:controller.shopdetailsKey,
+                key: controller.shopdetailsKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -146,11 +160,11 @@ class _ShopDetailssState extends State<ShopDetails> {
                                   style: TextStyle(fontFamily: PoppinsMedium),
                                 ),
                                 value: "Yes",
-                                groupValue: gender,
+                                groupValue: yesandno,
                                 onChanged: (value) {
                                   setState(() {
-                                    gender = value.toString();
-                                    print(gender);
+                                    yesandno = value.toString();
+                                    print(yesandno);
                                   });
                                 },
                               ),
@@ -164,11 +178,11 @@ class _ShopDetailssState extends State<ShopDetails> {
                                   style: TextStyle(fontFamily: PoppinsMedium),
                                 ),
                                 value: "No",
-                                groupValue: gender,
+                                groupValue: yesandno,
                                 onChanged: (value) {
                                   setState(() {
-                                    gender = value.toString();
-                                    print(gender);
+                                    yesandno = value.toString();
+                                    print(yesandno);
                                   });
                                 },
                               ),
@@ -192,11 +206,11 @@ class _ShopDetailssState extends State<ShopDetails> {
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Zrow Solution",
-                                labelText: "Company Name",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Zrow Solution",
+                            labelText: "Company Name",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -221,19 +235,18 @@ class _ShopDetailssState extends State<ShopDetails> {
                         //   ),
                         // ),
 
-
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companypannumber,
+                          validator: Validator.CompanypanNumber,
+                          controller: controller.companypannumber,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "E.g. ALWPG5809L",
-                                labelText: "Company PAN Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "E.g. ALWPG5809L",
+                            labelText: "Company PAN Number",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -251,7 +264,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                               textAlignVertical: TextAlignVertical.bottom,
                               enabled: false,
                               decoration: InputDecoration(
-                                hintText: "Company Pan  Photo",
+                                // hintText: "Company Pan  Photo",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                     borderSide: BorderSide(color: Colors.grey)),
@@ -259,9 +272,45 @@ class _ShopDetailssState extends State<ShopDetails> {
                             ),
                           ),
                         ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companypanphotouploaded,
+                              child: Text(
+                                "Company Pan Uploaded",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Appcolors.Toastcolor),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companypanphotos,
+                              child: Text(
+                                "Company Pan  Photo",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Colors.grey),
+                              )),
+                        ),
+
                         InkWell(
                           onTap: () {
-                            selectComapanypandialog(context);
+                            int i=0;
+                            i++;
+                            print(i);
+                            if(i==1){
+                              selectComapanypandialog(context);
+                              companypanphotouploaded =true;
+                              companypanphotos=false;
+                            }else{
+                              selectComapanypandialog(context);
+                            }
+
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 205, top: 12),
@@ -274,9 +323,9 @@ class _ShopDetailssState extends State<ShopDetails> {
                               ),
                               child: Center(
                                   child: Text(
-                                "Choose File",
-                                style: TextStyle(color: Colors.black54),
-                              )),
+                                    "Choose File",
+                                    style: TextStyle(color: Colors.black54),
+                                  )),
                             ),
                           ),
                         ),
@@ -303,21 +352,19 @@ class _ShopDetailssState extends State<ShopDetails> {
                         //   ),
                         // ),
 
-
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companygstnumber,
+                          validator: Validator.validateGstAddhars,
+                          controller: controller.companygstnumber,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "AAAAA0000A",
-                                labelText: "Company GST Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "AAAAA0000A",
+                            labelText: "Company GST Number",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
-
                       ),
                     ),
 
@@ -334,7 +381,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                               textAlignVertical: TextAlignVertical.bottom,
                               enabled: false,
                               decoration: InputDecoration(
-                                hintText: "GST Photo",
+                                // hintText: "GST Photo",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                     borderSide: BorderSide(color: Colors.grey)),
@@ -342,9 +389,45 @@ class _ShopDetailssState extends State<ShopDetails> {
                             ),
                           ),
                         ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companygstphotouploaded,
+                              child: Text(
+                                "GST Photo Uploaded",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Appcolors.Toastcolor),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companygstphotos,
+                              child: Text(
+                                "GST Photo",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Colors.grey),
+                              )),
+                        ),
+
                         InkWell(
                           onTap: () {
-                            selectComapanygstdialog(context);
+                            int i=0;
+                            i++;
+                            print(i);
+                            if(i==1){
+                              selectComapanygstdialog(context);
+                              companygstphotouploaded =true;
+                              companygstphotos=false;
+                            }else{
+                              selectComapanygstdialog(context);
+                            }
+
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 205, top: 12),
@@ -357,9 +440,9 @@ class _ShopDetailssState extends State<ShopDetails> {
                               ),
                               child: Center(
                                   child: Text(
-                                "Choose File",
-                                style: TextStyle(color: Colors.black54),
-                              )),
+                                    "Choose File",
+                                    style: TextStyle(color: Colors.black54),
+                                  )),
                             ),
                           ),
                         ),
@@ -389,16 +472,17 @@ class _ShopDetailssState extends State<ShopDetails> {
                         child: TextFormField(
                           // validator: Validator.validatePancard,
                           keyboardType: TextInputType.number,
-                          validator: Validator.validateFffsairegisterationnumber,
-                            controller: controller.companyfssainumber,
+                          validator:
+                          Validator.validateFffsairegisterationnumber,
+                          controller: controller.companyfssainumber,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "FSSAI Registration Number",
-                                labelText: "FSSAI Registration Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "FSSAI Registration Number",
+                            labelText: "FSSAI Registration Number",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -406,36 +490,102 @@ class _ShopDetailssState extends State<ShopDetails> {
                     SizedBox(
                       height: 20,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Container(
-                        // height: 49,
-                        // child: TextField(
-                        //   controller: controller.companyfssaidate,
-                        //   textAlignVertical: TextAlignVertical.bottom,
-                        //   enabled: true,
-                        //   decoration: InputDecoration(
-                        //     hintText: "FSSAI Validity Date",
-                        //     labelText: "FSSAI Validity Date",
-                        //     border: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(15.0),
-                        //         borderSide: BorderSide(color: Colors.grey)),
-                        //   ),
-                        // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 4),
+                    //   child: Container(
+                    //     // height: 49,
+                    //     // child: TextField(
+                    //     //   controller: controller.companyfssaidate,
+                    //     //   textAlignVertical: TextAlignVertical.bottom,
+                    //     //   enabled: true,
+                    //     //   decoration: InputDecoration(
+                    //     //     hintText: "FSSAI Validity Date",
+                    //     //     labelText: "FSSAI Validity Date",
+                    //     //     border: OutlineInputBorder(
+                    //     //         borderRadius: BorderRadius.circular(15.0),
+                    //     //         borderSide: BorderSide(color: Colors.grey)),
+                    //     //   ),
+                    //     // ),
+                    //
+                    //     child: TextFormField(
+                    //       // validator: Validator.validatePancard,
+                    //       validator: Validator.validateNumber,
+                    //       controller: controller.companyfssaidate,
+                    //       decoration: InputDecoration(
+                    //         hintMaxLines: 10,
+                    //         contentPadding: EdgeInsets.only(left: 10, top: 6),
+                    //         hintText: "FSSAI Validity Date",
+                    //         labelText: "FSSAI Validity Date",
+                    //         border: OutlineInputBorder(
+                    //             borderRadius: BorderRadius.circular(15.0)),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
-                        child: TextFormField(
-                          // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companyfssaidate,
-                          decoration: InputDecoration(
-                            hintMaxLines: 10,
-                            contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "FSSAI Validity Date",
-                                labelText: "FSSAI Validity Date",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                    InkWell(
+                      onTap: () async {
+                        DateTime? datepicked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1930),
+                            lastDate: DateTime(2027));
+
+                        if (datepicked != null) {
+                          setState(() {
+                            fssaivaliditydate =
+                            "${datepicked.day}/${datepicked.month}/${datepicked.year}";
+                            print(fssaivaliditydate);
+                          });
+                        } else if (datepicked == "null" && datepicked == null) {
+                          setState(() {
+                            fssaivaliditydate = "Select Date of Birth";
+                          });
+                        } else {
+                          setState(() {
+                            fssaivaliditydate = "Select Date of Birth";
+                          });
+                        }
+
+                        //bottom datapicker select to date of birth
+                        // DatePicker.showDatePicker(context,
+                        //     showTitleActions: true,
+                        //     minTime: DateTime(2014, 3, 5),
+                        //     maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                        //       print('change $date');
+                        //     }, onConfirm: (date) {
+                        //       print('confirm $date');
+                        //     }, currentTime: DateTime.now(), locale: LocaleType.en);
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Container(
+                              height: 49,
+                              child: TextField(
+                                textAlignVertical: TextAlignVertical.bottom,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  hintText:
+                                  "${fssaivaliditydate.toString() == "null" ? "Select Fssai Validity Date" : fssaivaliditydate} ",
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide:
+                                      BorderSide(color: Colors.grey)),
+                                ),
+                              ),
+                            ),
                           ),
-
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 275, top: 15),
+                            child: Icon(
+                              Icons.calendar_month_sharp,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -452,7 +602,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                               textAlignVertical: TextAlignVertical.bottom,
                               enabled: false,
                               decoration: InputDecoration(
-                                hintText: "FSSAI Certificate",
+                                // hintText: "FSSAI Certificate",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                     borderSide: BorderSide(color: Colors.grey)),
@@ -460,9 +610,46 @@ class _ShopDetailssState extends State<ShopDetails> {
                             ),
                           ),
                         ),
+
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companyfssaicertificatephotouploaded,
+                              child: Text(
+                                "FSSAI Certificate Uploaded",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Appcolors.Toastcolor),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companyfssaicertificatephotos,
+                              child: Text(
+                                "FSSAI Certificate",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Colors.grey),
+                              )),
+                        ),
+
                         InkWell(
                           onTap: () {
-                            selectComapanyfssaicerficatedialog(context);
+                            int i=0;
+                            i++;
+                            print(i);
+                            if(i==1){
+                              selectComapanyfssaicerficatedialog(context);
+                              companyfssaicertificatephotouploaded =true;
+                              companyfssaicertificatephotos=false;
+                            }else{
+                              selectComapanyfssaicerficatedialog(context);
+                            }
+
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 205, top: 12),
@@ -475,9 +662,9 @@ class _ShopDetailssState extends State<ShopDetails> {
                               ),
                               child: Center(
                                   child: Text(
-                                "Choose File",
-                                style: TextStyle(color: Colors.black54),
-                              )),
+                                    "Choose File",
+                                    style: TextStyle(color: Colors.black54),
+                                  )),
                             ),
                           ),
                         ),
@@ -506,18 +693,18 @@ class _ShopDetailssState extends State<ShopDetails> {
 
                         child: TextFormField(
                           // validator: Validator.validatePancard,
+                          keyboardType: TextInputType.number,
                           validator: Validator.validateNumber,
-                            controller: controller.companywhatsappnumber,
+                          controller: controller.companywhatsappnumber,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Whatsapp Number",
-                                labelText: "Whatsapp Number",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Whatsapp Number",
+                            labelText: "Whatsapp Number",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
-
                       ),
                     ),
 
@@ -529,35 +716,20 @@ class _ShopDetailssState extends State<ShopDetails> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Container(
-                        height: 49,
-                        // child: TextField(
-                        //   controller: controller.companybrandname,
-                        //   textAlignVertical: TextAlignVertical.bottom,
-                        //   enabled: true,
-                        //   decoration: InputDecoration(
-                        //     hintText: "Zrow Solution",
-                        //     labelText: "Brand Name",
-                        //     border: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(15.0),
-                        //         borderSide: BorderSide(color: Colors.grey)),
-                        //   ),
-                        // ),
 
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companybrandname,
+                          validator: Validator.validateName,
+                          controller: controller.companybrandname,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Zrow Solution",
-                                labelText: "Brand Name",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Zrow Solution",
+                            labelText: "Brand Name",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
-
-
                       ),
                     ),
 
@@ -574,7 +746,7 @@ class _ShopDetailssState extends State<ShopDetails> {
                               textAlignVertical: TextAlignVertical.bottom,
                               enabled: false,
                               decoration: InputDecoration(
-                                hintText: "Brand logo",
+                                // hintText: "Brand logo",
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                     borderSide: BorderSide(color: Colors.grey)),
@@ -582,9 +754,46 @@ class _ShopDetailssState extends State<ShopDetails> {
                             ),
                           ),
                         ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companybrandlogophotouploaded,
+                              child: Text(
+                                "Brand logo Uploaded",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Appcolors.Toastcolor),
+                              )),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 20),
+                          child: Visibility(
+                              visible: companybrandlogophotos,
+                              child: Text(
+                                "Brand logo",
+                                style: TextStyle(
+                                    fontFamily: PoppinsRegular,
+                                    color: Colors.grey),
+                              )),
+                        ),
+
+
                         InkWell(
                           onTap: () {
-                            selectComapanybranddialog(context);
+                            int i=0;
+                            i++;
+                            print(i);
+                            if(i==1){
+                              selectComapanybranddialog(context);
+                              companybrandlogophotouploaded =true;
+                              companybrandlogophotos=false;
+                            }else{
+                              selectComapanybranddialog(context);
+                            }
+
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 205, top: 12),
@@ -597,9 +806,9 @@ class _ShopDetailssState extends State<ShopDetails> {
                               ),
                               child: Center(
                                   child: Text(
-                                "Choose File",
-                                style: TextStyle(color: Colors.black54),
-                              )),
+                                    "Choose File",
+                                    style: TextStyle(color: Colors.black54),
+                                  )),
                             ),
                           ),
                         ),
@@ -612,32 +821,18 @@ class _ShopDetailssState extends State<ShopDetails> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Container(
-                        // height: 49,
-                        // child: TextField(
-                        //   controller: controller.companyaddress,
-                        //   textAlignVertical: TextAlignVertical.bottom,
-                        //   enabled: true,
-                        //   decoration: InputDecoration(
-                        //     hintText: "Address",
-                        //     labelText: "Address",
-                        //     border: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(15.0),
-                        //         borderSide: BorderSide(color: Colors.grey)),
-                        //   ),
-                        // ),
-
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companyaddress,
+                          validator: Validator.validateName,
+                          controller: controller.companyaddress,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Address",
-                                labelText: "Address",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Address",
+                            labelText: "Address",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -664,16 +859,16 @@ class _ShopDetailssState extends State<ShopDetails> {
 
                         child: TextFormField(
                           // validator: Validator.validatePancard,
-                          validator: Validator.validateNumber,
-                            controller: controller.companyaddress2,
+                          validator: Validator.validateAddress,
+                          controller: controller.companyaddress2,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Address 2",
-                                labelText: "Address 2",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Address 2",
+                            labelText: "Address 2",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -681,184 +876,417 @@ class _ShopDetailssState extends State<ShopDetails> {
                     SizedBox(
                       height: 20,
                     ),
-                    Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Container(
-                            height: 49,
-                            child: TextField(
-                              textAlignVertical: TextAlignVertical.bottom,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                // labelText: Statename,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(color: Colors.grey)),
-                              ),
+                    Container(
+                      // height: 50,
+                      child: DropdownSearch<dynamic>(
+                        enabled: true,
+                        // popupTitle: const Text(
+                        //   "Select Job Category",
+                        //   style: TextStyle(
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.w500,
+                        //       color: Colors.red),
+                        // ),
+                        popupBackgroundColor: Colors.white,
+                        validator: (value) {
+                          if (value == null) {
+                            return "Please select a State";
+                          } else {
+                            return null;
+                          }
+                        },
+                        dropdownSearchDecoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                          ),
+                          isDense: true,
+                          filled: true,
+                          isCollapsed: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
                             ),
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.only(
+                            left: 10.0,
+                            top: 0.0,
+                            bottom: 4.0,
+                            right: 5.0,
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 8),
-                          child: Container(
-                            child: SingleChildScrollView(
-                              child: DropdownButton(
-                                // Initial Value
-                                value: Statevalue,
-                                underline: SizedBox.shrink(),
-
-                                // Down Arrow Icon
-                                icon: const Icon(Icons.keyboard_arrow_down),
-
-                                // Array list of items
-                                items: State.map((String items) {
-                                  return DropdownMenuItem(
-                                    value: items,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 130),
-                                      child: Text(
-                                        Statename = items,
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        popupItemBuilder: (context, item, isSelected) {
+                          return ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            // dense: true,
+                            title: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    (item['name'].toString()),
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1,
+                                      fontSize: 18,
                                     ),
-                                  );
-                                }).toList(),
-                                // After selecting the desired option,it will
-                                // change button value to selected value
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    //var dropdownvalue any object set now
-                                    Statevalue = newValue!;
-                                  });
-                                },
+                                  ),
+                                  const Divider(color: Colors.grey),
+                                ],
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                        dropdownBuilder: (context, selectedItem) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 5),
+                            child: (selectedItem?['id'] == null)
+                                ? Row(
+                              children: const [
+                                Text(
+                                  "Select State",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'poppins',
+                                    color: Color(0xff9D9EA3),
+                                  ),
+                                ),
+                                Text(
+                                  '*',
+                                  style: TextStyle(
+                                    fontFamily: 'poppins',
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            )
+                                : Text(
+                              selectedItem['name'].toString(),
+                              style: const TextStyle(
+                                color: Color(0xff78746D),
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          );
+                        },
+                        mode: Mode.MENU,
+                        itemAsString: (dynamic u) {
+                          if (u?.name != null) {
+                            return u!.name.toString();
+                          } else {
+                            return "No State selected";
+                          }
+                        },
+                        selectedItem: stateitemselected,
+                        onFind: (String? filter) {
+                          return Dropdownservice().getStateData();
+                        },
+                        onChanged: (value) {
+                          stateitemselected = value;
+                          stateid = stateitemselected['id'];
+                          print(stateid);
+                          controller.saveStateId(stateid.toString());
+
+                        },
+                      ),
                     ),
 
                     SizedBox(
                       height: 20,
                     ),
-                    Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Container(
-                            height: 49,
-                            child: TextField(
-                              textAlignVertical: TextAlignVertical.bottom,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                // labelText: Statename,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(color: Colors.grey)),
-                              ),
+                    Container(
+                      // height: 50,
+                      child: DropdownSearch<dynamic>(
+                        enabled: true,
+                        // popupTitle: const Text(
+                        //   "Select Job Category",
+                        //   style: TextStyle(
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.w500,
+                        //       color: Colors.red),
+                        // ),
+                        popupBackgroundColor: Colors.white,
+                        validator: (value) {
+                          if (value == null) {
+                            return "Please select a City";
+                          } else {
+                            return null;
+                          }
+                        },
+                        dropdownSearchDecoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                          ),
+                          isDense: true,
+                          filled: true,
+                          isCollapsed: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
                             ),
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.only(
+                            left: 10.0,
+                            top: 0.0,
+                            bottom: 4.0,
+                            right: 5.0,
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 8),
-                          child: Container(
-                            child: SingleChildScrollView(
-                              child: DropdownButton(
-                                // Initial Value
-                                value: Cityvalue,
-                                underline: SizedBox.shrink(),
-
-                                // Down Arrow Icon
-                                icon: const Icon(Icons.keyboard_arrow_down),
-
-                                // Array list of items
-                                items: City.map((String items) {
-                                  return DropdownMenuItem(
-                                    value: items,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 185),
-                                      child: Text(
-                                        Cityname = items,
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        popupItemBuilder: (context, item, isSelected) {
+                          return ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            // dense: true,
+                            title: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    (item['name'].toString()),
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1,
+                                      fontSize: 18,
                                     ),
-                                  );
-                                }).toList(),
-                                // After selecting the desired option,it will
-                                // change button value to selected value
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    //var dropdownvalue any object set now
-                                    Cityvalue = newValue!;
-                                  });
-                                },
+                                  ),
+                                  const Divider(color: Colors.grey),
+                                ],
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                        dropdownBuilder: (context, selectedItem) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 5),
+                            child: (selectedItem?['id'] == null)
+                                ? Row(
+                              children: const [
+                                Text(
+                                  "Select City",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'poppins',
+                                    color: Color(0xff9D9EA3),
+                                  ),
+                                ),
+                                Text(
+                                  '*',
+                                  style: TextStyle(
+                                    fontFamily: 'poppins',
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            )
+                                : Text(
+                              selectedItem['name'].toString(),
+                              style: const TextStyle(
+                                color: Color(0xff78746D),
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          );
+                        },
+                        mode: Mode.MENU,
+                        itemAsString: (dynamic u) {
+                          if (u?.name != null) {
+                            return u!.name.toString();
+                          } else {
+                            return "No City selected";
+                          }
+                        },
+                        selectedItem: Cityitemselected,
+                        onFind: (String? filter) {
+                          return Dropdownservice().getCityData();
+                        },
+                        onChanged: (value) {
+                          Cityitemselected = value;
+                          Cityid = Cityitemselected['id'];
+                          controller.saveCityId(Cityid.toString());
+                          print("City Id:"+Cityid.toString());
+                        },
+                      ),
                     ),
+
 
                     SizedBox(
                       height: 20,
                     ),
-                    Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Container(
-                            height: 49,
-                            child: TextField(
-                              textAlignVertical: TextAlignVertical.bottom,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                // labelText: Statename,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide: BorderSide(color: Colors.grey)),
-                              ),
+
+                    Container(
+                      // height: 50,
+                      child: DropdownSearch<dynamic>(
+                        enabled: true,
+                        // popupTitle: const Text(
+                        //   "Select Job Category",
+                        //   style: TextStyle(
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.w500,
+                        //       color: Colors.red),
+                        // ),
+                        popupBackgroundColor: Colors.white,
+                        validator: (value) {
+                          if (value == null) {
+                            return "Please select a District";
+                          } else {
+                            return null;
+                          }
+                        },
+                        dropdownSearchDecoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                          ),
+                          isDense: true,
+                          filled: true,
+                          isCollapsed: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
                             ),
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.only(
+                            left: 10.0,
+                            top: 0.0,
+                            bottom: 4.0,
+                            right: 5.0,
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 8),
-                          child: Container(
-                            child: SingleChildScrollView(
-                              child: DropdownButton(
-                                // Initial Value
-                                value: Districtvalue,
-                                underline: SizedBox.shrink(),
-
-                                // Down Arrow Icon
-                                icon: const Icon(Icons.keyboard_arrow_down),
-
-                                // Array list of items
-                                items: District.map((String items) {
-                                  return DropdownMenuItem(
-                                    value: items,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 165),
-                                      child: Text(
-                                        Districtname = items,
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        popupItemBuilder: (context, item, isSelected) {
+                          return ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            // dense: true,
+                            title: Padding(
+                              padding: const EdgeInsets.only(left: 20, right: 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    (item['name'].toString()),
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1,
+                                      fontSize: 18,
                                     ),
-                                  );
-                                }).toList(),
-                                // After selecting the desired option,it will
-                                // change button value to selected value
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    //var dropdownvalue any object set now
-                                    Districtvalue = newValue!;
-                                  });
-                                },
+                                  ),
+                                  const Divider(color: Colors.grey),
+                                ],
                               ),
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                        dropdownBuilder: (context, selectedItem) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 15, bottom: 5),
+                            child: (selectedItem?['id'] == null)
+                                ? Row(
+                              children: const [
+                                Text(
+                                  "Select District",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'poppins',
+                                    color: Color(0xff9D9EA3),
+                                  ),
+                                ),
+                                Text(
+                                  '*',
+                                  style: TextStyle(
+                                    fontFamily: 'poppins',
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            )
+                                : Text(
+                              selectedItem['name'].toString(),
+                              style: const TextStyle(
+                                color: Color(0xff78746D),
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          );
+                        },
+                        mode: Mode.MENU,
+                        itemAsString: (dynamic u) {
+                          if (u?.name != null) {
+                            return u!.name.toString();
+                          } else {
+                            return "No District selected";
+                          }
+                        },
+                        selectedItem: Districtitemselected,
+                        onFind: (String? filter) {
+                          Map districtid={
+                            'id':Districtid.toString(),
+                          };
+                          return Dropdownservice().getDistrictData();
+                        },
+                        onChanged: (value) {
+                          Districtitemselected = value;
+                          Districtid = Districtitemselected['id'];
+                          print("District Id:"+Districtid.toString());
+                        },
+                      ),
                     ),
 
                     SizedBox(
@@ -867,33 +1295,18 @@ class _ShopDetailssState extends State<ShopDetails> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Container(
-                        // height: 49,
-                        // child: TextField(
-                        //   controller: controller.companypincode,
-                        //   textAlignVertical: TextAlignVertical.bottom,
-                        //   enabled: true,
-                        //   decoration: InputDecoration(
-                        //     hintText: "Pin code",
-                        //     labelText: "Pin code",
-                        //     border: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(15.0),
-                        //         borderSide: BorderSide(color: Colors.grey)),
-                        //   ),
-                        // ),
-
-
                         child: TextFormField(
                           // validator: Validator.validatePancard,
                           validator: Validator.validatePincode,
-                            controller: controller.companypincode,
+                          controller: controller.companypincode,
                           decoration: InputDecoration(
                             hintMaxLines: 10,
                             contentPadding: EdgeInsets.only(left: 10, top: 6),
-                                hintText: "Pin code",
-                                labelText: "Pin code",
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+                            hintText: "Pin code",
+                            labelText: "Pin code",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0)),
                           ),
-
                         ),
                       ),
                     ),
@@ -988,35 +1401,15 @@ class _ShopDetailssState extends State<ShopDetails> {
                     ),
                     InkWell(
                       onTap: () {
-                        // Map shopdetailsparam = {
-                        //   'company_name': controller.companyname.text.toString(),
-                        //   'company_pan_no': controller.companypannumber,
-                        //   'company_pan_image': companypanphoto.toString(),
-                        //   'gst_number': controller.companygstnumber.text.toString(),
-                        //   'gst_image': companygstphoto.toString(),
-                        //   'fssai_number': controller.companyfssainumber.text.toString(),
-                        //   'fssai_image': companyfssaicertificate.toString(),
-                        //   'fssai_date': controller.companyfssaidate.text.toString(),
-                        //   'whatsapp': controller.companywhatsappnumber.text.toString(),
-                        //   'brand_name': controller.companybrandname.text.toString(),
-                        //   'company_logo': companybrandlogo.toString(),
-                        //   'bussiness_address_1': controller.companyaddress.text.toString(),
-                        //   'bussiness_address_2': controller.companyaddress2.text.toString(),
-                        //   'state': Statename.toString(),
-                        //   'city': Cityname.toString(),
-                        //   'district': Districtname.toString(),
-                        //   'pin_code': controller.companypincode.text.toString(),
-                        //   'id': id.toString(),
-                        // };
-                        // controller.sellerShopdetail(context, shopdetailsparam);
-                        if(controller.shopdetailsKey.currentState!.validate()){
-                          try{
+
+                        if (controller.shopdetailsKey.currentState!
+                            .validate()) {
+                          try {
                             uploadpersonaldetails();
-                          }catch(e){
+                          } catch (e) {
                             print(e.toString());
                           }
                         }
-                       
                       },
                       child: Center(
                         child: Container(
@@ -1055,18 +1448,20 @@ class _ShopDetailssState extends State<ShopDetails> {
 
   Future<void> uploadpersonaldetails() async {
     setState(() {
-      showspinner=true;
+      showspinner = true;
     });
+
     //user data to server
     SharedPreferences userpref = await SharedPreferences.getInstance();
     setState(() {
       id = userpref.getString('id') ?? '';
     });
 
-    print("ids${id.toString()}");
+    print("ids${id.toString()}:Comapany_Name:${controller.companyname.text.toString()} :company_pan_no:${controller.companypannumber.text.toString()}:gst_number:${controller.companygstnumber.text.toString()}:fssai_number:${controller.companyfssainumber.text.toString()}:fssai_date:${fssaivaliditydate.toString()}:whatsapp${controller.companywhatsappnumber.text.toString()} :brand_name:${controller.companybrandname.text.toString()}:bussiness_address_1:${controller.companyaddress.text.toString()}:bussiness_address_2:${controller.companyaddress2.text.toString()}:state:${stateid.toString()} :city${Cityid.toString()}:district${Districtid.toString()}:pin_code:${controller.companypincode.text.toString()}: id:${id.toString()}: company_pan_image:${companypanphoto!.path}:gst_image:${companyfssaicertificate!.path}: fssai_image:${companyfssaicertificate!.path} :company_logo:${companybrandlogo!.path}");
+
 
     var uri =
-        Uri.parse('http://homliadmin.globusachievers.com/api/seller-company');
+    Uri.parse('http://homliadmin.globusachievers.com/api/seller-company');
 
     var request = new http.MultipartRequest('POST', uri);
 
@@ -1076,7 +1471,7 @@ class _ShopDetailssState extends State<ShopDetails> {
     request.fields['gst_number'] = controller.companygstnumber.text.toString();
     request.fields['fssai_number'] =
         controller.companyfssainumber.text.toString();
-    request.fields['fssai_date'] = controller.companyfssaidate.text.toString();
+    request.fields['fssai_date'] = fssaivaliditydate.toString();
     request.fields['whatsapp'] =
         controller.companywhatsappnumber.text.toString();
     request.fields['brand_name'] = controller.companybrandname.text.toString();
@@ -1084,10 +1479,10 @@ class _ShopDetailssState extends State<ShopDetails> {
         controller.companyaddress.text.toString();
     request.fields['bussiness_address_2'] =
         controller.companyaddress2.text.toString();
-    request.fields['state'] = Statename.toString();
-    request.fields['city'] = Cityname.toString();
-    request.fields['district'] = Districtname.toString();
-    request.fields['pin_code'] = controller.companypincode.text.toString();
+    request.fields['state'] = stateid.toString();
+    request.fields['city'] = Cityid.toString();
+    request.fields['district'] = Districtid.toString();
+    request.fields['pincode'] = controller.companypincode.text.toString();
     request.fields['id'] = id.toString();
 
     var company_pan_imagemultiport = await http.MultipartFile.fromPath(
@@ -1095,12 +1490,13 @@ class _ShopDetailssState extends State<ShopDetails> {
     request.files.add(company_pan_imagemultiport);
 
     var gst_imagemultiport =
-        await http.MultipartFile.fromPath("gst_image", companygstphoto!.path);
+    await http.MultipartFile.fromPath("gst_image", companygstphoto!.path);
     request.files.add(gst_imagemultiport);
 
     var fssai_imagemultiport = await http.MultipartFile.fromPath(
         "fssai_image", companyfssaicertificate!.path);
     request.files.add(fssai_imagemultiport);
+
 
     var company_logomultiport = await http.MultipartFile.fromPath(
         "company_logo", companybrandlogo!.path);
@@ -1112,16 +1508,17 @@ class _ShopDetailssState extends State<ShopDetails> {
 
     print(response.stream.toString());
     if (response.statusCode == 200) {
-        setState(() {
-          showspinner=false;
-        });
+      setState(() {
+        showspinner = false;
+      });
       print('Shop Detail Uploaded Successfully');
       // Utility().myfluttertoast(value['msg']);
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeView()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeView()));
       Utility().myfluttertoast("Shop Detail Uploaded Successfully");
     } else {
       setState(() {
-        showspinner=false;
+        showspinner = false;
       });
       print('failed');
       Utility().myfluttertoast("Some thing wrong data");
@@ -1132,12 +1529,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companypanphoto = File(pickfile.path);
-        Utility().myfluttertoast("Pan Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Pan Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1147,12 +1544,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companypanphoto = File(pickfile.path);
-        Utility().myfluttertoast("Pan  Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Pan  Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1201,12 +1598,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companygstphoto = File(pickfile.path);
-        Utility().myfluttertoast("Gst Image Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Gst Image Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1216,12 +1613,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companygstphoto = File(pickfile.path);
-        Utility().myfluttertoast("Gst Image  Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Gst Image  Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1270,12 +1667,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companyfssaicertificate = File(pickfile.path);
-        Utility().myfluttertoast("Fssai Certificate Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Fssai Certificate Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1285,12 +1682,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companyfssaicertificate = File(pickfile.path);
-        Utility().myfluttertoast("Fssai Certificate  Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Fssai Certificate  Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1339,12 +1736,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companybrandlogo = File(pickfile.path);
-        Utility().myfluttertoast("Brand Logo Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Brand Logo Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1354,12 +1751,12 @@ class _ShopDetailssState extends State<ShopDetails> {
     final pickfile = await pickImage.pickImage(source: ImageSource.camera);
     setState(() {
       if (pickfile != null) {
-        showspinner=true;
+        showspinner = true;
         companybrandlogo = File(pickfile.path);
-        Utility().myfluttertoast("Brand Logo  Uploaded Successfully");
-        showspinner=false;
+        // Utility().myfluttertoast("Brand Logo  Uploaded Successfully");
+        showspinner = false;
       } else {
-        showspinner=false;
+        showspinner = false;
         Utility().myfluttertoast("No Image Selected");
       }
     });
@@ -1404,107 +1801,29 @@ class _ShopDetailssState extends State<ShopDetails> {
         });
   }
 
-// Future<void> uploadpersonaldetails() async {
-//
-//
-//
-//   SharedPreferences userpref =
-//   await SharedPreferences.getInstance();
-//   setState(() {
-//     id = userpref.getString('id') ?? '';
-//   });
-//
-//
-//
-//   var uri = Uri.parse('http://homliadmin.globusachievers.com/api/seller-personal');
-//
-//   var request = new http.MultipartRequest('POST', uri);
-//
-//
-//   request.fields['company_name'] = controller.companyname.text.toString();
-//   request.fields['company_pan_no'] = controller.companypannumber.toString();
-//   request.fields['gst_number'] = controller.companygstnumber.text.toString();
-//   request.fields['fssai_number'] = controller.companyfssainumber.text.toString();
-//   request.fields['fssai_date'] = controller.companyfssaidate.text.toString();
-//   request.fields['whatsapp'] = controller.companywhatsappnumber.text.toString();
-//   request.fields['brand_name'] = controller.companybrandname.text.toString();
-//   request.fields['bussiness_address_1'] = controller.companyaddress.text.toString();
-//   request.fields['bussiness_address_2'] =controller.companyaddress2.text.toString();
-//   request.fields['state'] =Statename.toString();
-//   request.fields['city'] =Cityname.toString();
-//   request.fields['district'] =Districtname.toString();
-//   request.fields['pin_code'] =controller.companypincode.text.toString();
-//   request.fields['id'] =id.toString();
-//
-//   Map shopdetailsparam = {
-//     'company_name': controller.companyname.text.toString(),
-//     'company_pan_no': controller.companypannumber,
-//     'company_pan_image': companypanphoto.toString(),
-//     'gst_number': controller.companygstnumber.text.toString(),
-//     'gst_image': companygstphoto.toString(),
-//     'fssai_number': controller.companyfssainumber.text.toString(),
-//     'fssai_image': companyfssaicertificate.toString(),
-//     'fssai_date': controller.companyfssaidate.text.toString(),
-//     'whatsapp': controller.companywhatsappnumber.text.toString(),
-//     'brand_name': controller.companybrandname.text.toString(),
-//     'company_logo': companybrandlogo.toString(),
-//     'bussiness_address_1': controller.companyaddress.text.toString(),
-//     'bussiness_address_2': controller.companyaddress2.text.toString(),
-//     'state': Statename.toString(),
-//     'city': Cityname.toString(),
-//     'district': Districtname.toString(),
-//     'pin_code': controller.companypincode.text.toString(),
-//     'id': id.toString(),
-//   };
-//
-//   var company_logostream = new http.ByteStream(companybrandlogo!.openRead());
-//   company_logostream.cast();
-//   var company_logostreamlenghth = await companybrandlogo!.length();
-//
-//   var gst_imagestreamport = new http.MultipartFile('company_logo', company_logostream, company_logostreamlenghth);
-//   request.files.add(gst_imagestreamport);
-//
-//   var fssai_imagestream = new http.ByteStream(companyfssaicertificate!.openRead());
-//   fssai_imagestream.cast();
-//   var fssai_imagestreamlength = await companyfssaicertificate!.length();
-//
-//   var gst_imagestreamport = new http.MultipartFile('fssai_image', fssai_imagestream, fssai_imagestreamlength);
-//   request.files.add(gst_imagestreamport);
-//
-//
-//   var gst_imagestream = new http.ByteStream(companygstphoto!.openRead());
-//   gst_imagestream.cast();
-//   var gst_imagestreamlenght = await companygstphoto!.length();
-//
-//   var gst_imagestreamport = new http.MultipartFile('gst_image', gst_imagestream, gst_imagestreamlenght);
-//   request.files.add(gst_imagestreamport);
-//
-//
-//   var company_pan_imagestream = new http.ByteStream(companypanphoto!.openRead());
-//   company_pan_imagestream.cast();
-//   var company_pan_imagestreamlenghth = await companypanphoto!.length();
-//
-//   var pancardmultiport = new http.MultipartFile('company_pan_image', company_pan_imagestream, company_pan_imagestreamlenghth);
-//   request.files.add(pancardmultiport);
-//
-//
-//
-//
-//
-//
-//
-//   print("All parametres"+request.toString());
-//
-//   var response = await request.send();
-//
-//   print(response.stream.toString());
-//   if (response.statusCode == 200) {
-//     print('image uploaded');
-//     Utility().myfluttertoast("Personal Detail Uploaded Successfully");
-//   } else {
-//     print('failed');
-//     Utility().myfluttertoast("Some thing wrong data");
-//   }
-// }
+  void SignupSuccessdialog(context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            content: Container(
+              height: 120,
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    // child: Icon(Icons.right),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
 
 }
+

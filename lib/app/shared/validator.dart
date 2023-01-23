@@ -15,6 +15,7 @@ class Validator {
     }
   }
 
+  //this work
   static String? validateMobile(String? value) {
     String patttern = r'(^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$)';
     RegExp regExp = RegExp(patttern);
@@ -26,13 +27,44 @@ class Validator {
     return null;
   }
 
-  static String? validateAadhar(String? value) {
-    // String patttern = r'(^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$)';
-    // RegExp regExp = RegExp(patttern);
+  //this right work
+  static String? validPanNumber(String? value) {
+    String patttern = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
+    RegExp regExp = RegExp(patttern);
     if (value == null || value.isEmpty) {
-      return "Please enter a valid Aadhar number";
+      return "Please enter a valid Pan number";
+    } else if (!regExp.hasMatch(value)) {
+      return "Please enter a valid Pan number";
     }
     return null;
+  }
+
+
+  //this work
+  static String? validateAadharNumber(String? value) {
+    String pattern ="^[2-9]{1}[0-9]{3}\\s[0-9]{4}\\s[0-9]{4}";
+    RegExp regExp = RegExp(pattern);
+    if (value==null) {
+      return 'Please Enter Aadhar card Number';
+    } else if (!regExp.hasMatch(value)) {
+      return 'Please Enter Valid Aadhar card Number';
+    }
+    return "";
+  }
+
+
+  //this work
+  //gst number like this: 06BZAHM6385P6Z2
+  static String? validateGstAddhar(String? value) {
+    // String pattern ="^[0-9]{2}[A-Z]{5}""[0-9]{4}[A-Z]{1}[""1-9A-Z]{1}Z[0-9A-Z]{1}";
+    String pattern ="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}";
+    RegExp regExp = RegExp(pattern);
+    if (value==null) {
+      return 'Please Enter Gst Number';
+    } else if (!regExp.hasMatch(value)) {
+      return 'Please Enter Valid Gst Number';
+    }
+    return "";
   }
 
   static String? validatepandCard(String? value) {
@@ -45,16 +77,7 @@ class Validator {
   }
 
 
-  static String? validateAadharcard(String? value) {
-    String pattern = r'^[2-9]{1}[0-9]{3}\\s[0-9]{4}\\s[0-9]{4}$';
-    RegExp regExp = RegExp(pattern);
-    if (value==null) {
-      return 'Please Enter Aadhar card Number';
-    } else if (!regExp.hasMatch(value)) {
-      return 'Please Enter Valid Aadhar card Number';
-    }
-    return "";
-  }
+
 
   static String? validatePancard(String? value) {
     String pattern = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}$';
@@ -97,15 +120,36 @@ class Validator {
     }
   }
 
-  // static String? validatePancard(String? value) {
-  //   if (value == null) {
-  //     return "Please enter a valid Pancard";
-  //   } else if (value.isEmpty) {
-  //     return "Please enter a valid Pancard";
-  //   } else {
-  //     return null;
-  //   }
-  // }
+
+  static String? validateGstAddhars(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a Gst Number";
+    }else if(value.length > 14){
+      return "Please enter the 14 digit number";
+    }else if(value.length < 14){
+      return "Please enter the 14 digit number";
+    }else if(value.contains(' ')){
+      return 'Gst Number should not contain space';
+    }else{
+
+    }
+  }
+
+  static String? validatePancarddata(String? value) {
+    if (value == null) {
+      return "Please enter a valid Pancard Number";
+    } else if (value.isEmpty) {
+      return "Please enter a valid Pancard Number";
+    }else if(value.length > 10){
+      return "Please enter the 10 digit number";
+    }else if(value.length < 10){
+      return "Please enter the 14 digit number";
+    }else if(value.contains(' ')){
+      return 'Pancard Number should not contain space';
+    }else {
+      return null;
+    }
+  }
 
   static String? validateIfsc(String? value) {
     if (value == null) {
@@ -152,6 +196,43 @@ class Validator {
       return "Please enter a valid Mobile number";
     }
   }
+
+  static String? validateAddress(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a valid Address";
+    }
+  }
+
+  static String? CompanypanNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter a valid Comapany PAN Number";
+    }else if(value.length > 10){
+      return "Please enter the 10 digit number";
+    }else if(value.length < 10){
+      return "Please enter the ten digit number";
+    }else if(value.contains(' ')){
+      return 'PAN Number should not contain space';
+    }else{
+
+    }
+  }
+
+  // static String? CompanypanyGstNumber(String? value) {
+  //   if (value == null || value.isEmpty) {
+  //     return "Please enter a valid Comapany GST Number";
+  //   }else if(value.length > 15){
+  //     return "Please enter the 10 digit number";
+  //   }else if(value.length < 15){
+  //     return "Please enter the 10 digit number";
+  //   }else if(value.contains(' ')){
+  //     return 'Comapany GST Number should not contain space';
+  //   }else{
+  //
+  //   }
+  // }
+
+
+
 
   static String? validatePincode(String? value) {
     if (value == null || value.isEmpty) {

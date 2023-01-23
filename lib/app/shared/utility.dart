@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:homlisellerapp/app/shared/color.dart';
 
+import '../constants/colors.dart';
+
 class Utility {
   static bool isNullEmptyOrFalse(Object? o) {
     return o == null ||
@@ -24,7 +26,7 @@ class Utility {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor:Appcolors.Toastcolor,
         textColor: Colors.white,
         fontSize: 16.0);
   }

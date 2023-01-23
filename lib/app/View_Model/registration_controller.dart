@@ -118,18 +118,18 @@ class RegistrationController extends GetxController {
           if (inputmobileot == value['data']['phone_otp'] &&
               inputemailotp == value['data']['email_otp']) {
             print(value['msg'].toString());
-            Utility().myfluttertoast("Register Successfully");
+            Utility().myfluttertoast("User created Successfully");
             Navigator.pushNamed(context, RoutesName.PersonalDetails);
           } else {
-            Utility().myfluttertoast("Please Enter The Correct Otp");
+            Utility().myfluttertoast("Otp was wrong");
           }
         } else if (value['data']['email_verify'] == "no" ||
             value['data']['phone_verify'] == "no") {
-          Utility().myfluttertoast("Veriefy the email & phone no");
+          Utility().myfluttertoast("Veriefy the Email/Mob");
         }
       } else {
         debugPrint("response wrong");
-        Utility().myfluttertoast("Server Issue");
+        Utility().myfluttertoast("Enter the Valid Data");
       }
 
       // print("this working right");

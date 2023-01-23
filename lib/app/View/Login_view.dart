@@ -16,6 +16,7 @@ import 'package:sms_autofill/sms_autofill.dart';
 
 import '../View_Model/login_controller.dart';
 import '../shared/validator.dart';
+import 'AllScreen.dart';
 import 'datepicker.dart';
 import 'home_view.dart';
 
@@ -107,7 +108,7 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
               children: [
                 InkWell(
                   onTap: (){
-                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>allscreeen()));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>AllScreen()));
                   },
                   child: const Padding(
                     padding: EdgeInsets.only(top: 25),
@@ -395,7 +396,9 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+
+                      },
                       child: Container(
                         margin:
                             const EdgeInsets.only(right: 8, left: 8, bottom: 8),
@@ -455,10 +458,10 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
             data['data']['email_otp'].toString(), loginmono);
         Utility().myfluttertoast("Send Otp Successfully");
       } else {
-        Utility().myfluttertoast("Please Enter Valid Email Id");
+        Utility().myfluttertoast("User does not exist");
       }
     } else {
-      Utility().myfluttertoast("Please Enter Valid Email Id");
+      Utility().myfluttertoast("User does not exist");
     }
   }
 
