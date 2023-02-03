@@ -6,6 +6,8 @@ import '../View/PersonalDetails.dart';
 import '../View/Sales-Report.dart';
 import '../View/ShopDetails.dart';
 import '../View/home_view.dart';
+import '../View/khana_views/add_khana_form_one_view.dart';
+import '../View/khana_views/khana_food_one_view.dart';
 import '../View/registration_view.dart';
 import 'RoutesName.dart';
 class Routes{
@@ -26,6 +28,12 @@ class Routes{
 
         case RoutesName.SalesReport:
         return MaterialPageRoute(builder: (context)=>SalesReport());
+
+        case RoutesName.AddKhanaFormOneView:
+        return MaterialPageRoute(builder: (context)=>AddKhanaFormOneView());
+
+        case RoutesName.KhanaFoodOneView:
+        return MaterialPageRoute(builder: (context)=>KhanaFoodOneView());
 
 
       default:

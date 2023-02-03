@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homlisellerapp/app/routes/RoutesName.dart';
 import 'package:homlisellerapp/app/shared/widgets/order_widget.dart';
 
 import 'package:homlisellerapp/app/shared/widgets/sidemenu.dart';
@@ -64,10 +65,24 @@ class MenuView extends StatelessWidget {
                 ),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: TodayDropdownWidget(),
-            ),
+         Row(
+           children: [
+             const Padding(
+               padding: EdgeInsets.only(left: 20),
+               child: TodayDropdownWidget(),
+             ),
+
+             InkWell(
+               onTap: (){
+                 Navigator.pushNamed(context, RoutesName.AddKhanaFormOneView);
+               },
+               child: Padding(
+                 padding: const EdgeInsets.only(left: 160),
+                 child: Icon(Icons.add,size: 40,),
+               ),
+             ),
+           ],
+         ),
             const SizedBox(
               height: 10,
             ),

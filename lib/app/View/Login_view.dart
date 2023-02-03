@@ -25,6 +25,8 @@ class LoginView extends StatefulWidget {
 
   @override
   State<LoginView> createState() => _LoginViewState();
+
+
 }
 
 class _LoginViewState extends State<LoginView> with CodeAutoFill {
@@ -71,10 +73,21 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
   }
 
   @override
-  void initState() {
+  void initState() async{
     // TODO: implement initState
     super.initState();
+
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      String? token = sp.getString("token");
+
+      if (token == null || token == '' || token.isEmpty || token.isEmpty) {
+        Navigator.pushNamed(context, RoutesName.Login);
+      } else {
+        Navigator.pushNamed(context, RoutesName.HOME);
+      }
+
     listenOtp();
+
   }
 
   void listenOtp() async {
@@ -91,6 +104,8 @@ class _LoginViewState extends State<LoginView> with CodeAutoFill {
     _timer.cancel();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {

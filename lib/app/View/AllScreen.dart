@@ -157,7 +157,7 @@ class _AlscreeState extends State<Alscree> {
 
               selectedItem: stateitemselected,
               onFind: (String? filter) {
-                return Dropdownservice().getStateData();
+                return Dropdownservice().getmainCategory();
               },
               onChanged: (value) {
                 stateitemselected = value;

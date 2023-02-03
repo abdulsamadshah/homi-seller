@@ -27,6 +27,11 @@ class RegistrationView extends StatefulWidget {
   State<RegistrationView> createState() => _RegistrationViewState();
 }
 
+
+
+
+
+
 class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
   final controller = Get.put(RegistrationController());
   bool _visible = false;
@@ -663,8 +668,7 @@ class _RegistrationViewState extends State<RegistrationView> with CodeAutoFill {
                             print("Mobile Otp data" + mobileotps.toString());
 
                             Map Registerparam = {
-                              'first_name': controller
-                                  .first_name_controller.text
+                              'first_name': controller.first_name_controller.text
                                   .toString(),
                               'last_name': controller.last_name_controller.text
                                   .toString(),

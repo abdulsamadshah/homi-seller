@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:homlisellerapp/app/constants/fonts.dart';
@@ -50,7 +52,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
  String? yesandno='Yes';
-  ShopdetailsController controller = ShopdetailsController();
+  ShopdetailsController controller =Get.put(ShopdetailsController());
 
   String? fssaivaliditydate;
   var pickImage = ImagePicker();
@@ -999,7 +1001,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         selectedItem: stateitemselected,
                         onFind: (String? filter) {
-                          return Dropdownservice().getStateData();
+                          return Dropdownservice().getStatemain();
                         },
                         onChanged: (value) {
                           stateitemselected = value;
@@ -1137,7 +1139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         selectedItem: Cityitemselected,
                         onFind: (String? filter) {
-                          return Dropdownservice().getCityData();
+                          return Dropdownservice().getStatedata();
                         },
                         onChanged: (value) {
                           Cityitemselected = value;
@@ -1400,15 +1402,38 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 20,
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: (){
 
-                        if (controller.shopdetailsKey.currentState!
-                            .validate()) {
-                          try {
-                            uploadpersonaldetails();
-                          } catch (e) {
-                            print(e.toString());
-                          }
+                        if (controller.shopdetailsKey.currentState!.validate()) {
+                            if(controller.companyname.text.toString()=="" && controller.companyname.text.toString()==null && controller.companyname.text.toString().isEmpty){
+                              Utility().myfluttertoast("company_name Number is Empty");
+                            }else if(controller.companypannumber.text.toString()=="" && controller.companypannumber.text.toString()==null && controller.companypannumber.text.toString().isEmpty){
+                              Utility().myfluttertoast("company_pan_no Number is Empty");
+                            }else if(controller.companygstnumber.text.toString()=="" && controller.companygstnumber.text.toString()==null && controller.companygstnumber.text.toString().isEmpty){
+                              Utility().myfluttertoast("gst_number Number is Empty");
+                            }else if(controller.companyfssainumber.text.toString()=="" && controller.companyfssainumber.text.toString()==null && controller.companyfssainumber.text.toString().isEmpty){
+                              Utility().myfluttertoast("fssai_number Number is Empty");
+                            }else if(fssaivaliditydate.toString()=="" && fssaivaliditydate.toString()==null && fssaivaliditydate.toString().isEmpty){
+                              Utility().myfluttertoast("fssai_date Number is Empty");
+                            }else if(controller.companywhatsappnumber.text.toString()=="" && controller.companywhatsappnumber.text.toString()==null && controller.companywhatsappnumber.text.toString().isEmpty){
+                              Utility().myfluttertoast("whatsapp Number is Empty");
+                            }else if(controller.companybrandname.text.toString()=="" && controller.companybrandname.text.toString()==null && controller.companybrandname.text.toString().isEmpty){
+                              Utility().myfluttertoast("brand_name  is Empty");
+                            }else if(controller.companyaddress.text.toString()=="" && controller.companyaddress.text.toString()==null && controller.companyaddress.text.toString().isEmpty){
+                              Utility().myfluttertoast("bussiness_address_1  is Empty");
+                            }else if(controller.companyaddress2.text.toString()=="" && controller.companyaddress2.text.toString()==null && controller.companyaddress2.text.toString().isEmpty){
+                              Utility().myfluttertoast("bussiness_address_2  is Empty");
+                            }else if(stateid.toString()=="" && stateid.toString()==null && stateid.toString().isEmpty){
+                              Utility().myfluttertoast("Select The State");
+                            }else if(Cityid.toString()=="" && Cityid.toString()==null && Cityid.toString().isEmpty){
+                              Utility().myfluttertoast("Select The City");
+                            }else if(Districtid.toString()=="" && Districtid.toString()==null && Districtid.toString().isEmpty){
+                              Utility().myfluttertoast("Select The District");
+                            }else if(controller.companypincode.text.toString()=="" && controller.companypincode.text.toString()==null && controller.companypincode.text.toString().isEmpty){
+                              Utility().myfluttertoast("Pincode  is Empty");
+                            }else{
+                              uploadpersonaldetails();
+                            }
                         }
                       },
                       child: Center(
@@ -1447,9 +1472,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> uploadpersonaldetails() async {
-    setState(() {
-      showspinner = true;
-    });
+
+
 
     //user data to server
     SharedPreferences userpref = await SharedPreferences.getInstance();
@@ -1457,11 +1481,10 @@ class _MyHomePageState extends State<MyHomePage> {
       id = userpref.getString('id') ?? '';
     });
 
-    print("ids${id.toString()}:Comapany_Name:${controller.companyname.text.toString()} :company_pan_no:${controller.companypannumber.text.toString()}:gst_number:${controller.companygstnumber.text.toString()}:fssai_number:${controller.companyfssainumber.text.toString()}:fssai_date:${fssaivaliditydate.toString()}:whatsapp${controller.companywhatsappnumber.text.toString()} :brand_name:${controller.companybrandname.text.toString()}:bussiness_address_1:${controller.companyaddress.text.toString()}:bussiness_address_2:${controller.companyaddress2.text.toString()}:state:${stateid.toString()} :city${Cityid.toString()}:district${Districtid.toString()}:pin_code:${controller.companypincode.text.toString()}: id:${id.toString()}: company_pan_image:${companypanphoto!.path}:gst_image:${companyfssaicertificate!.path}: fssai_image:${companyfssaicertificate!.path} :company_logo:${companybrandlogo!.path}");
 
 
-    var uri =
-    Uri.parse('http://homliadmin.globusachievers.com/api/seller-company');
+
+    var uri = Uri.parse('http://homliadmin.globusachievers.com/api/seller-company');
 
     var request = new http.MultipartRequest('POST', uri);
 
@@ -1503,19 +1526,35 @@ class _MyHomePageState extends State<MyHomePage> {
     request.files.add(company_logomultiport);
 
     print("All parametres" + request.toString());
+    setState(() {
+      showspinner = true;
+    });
 
-    var response = await request.send();
+    var response = await request.send().timeout(Duration(seconds: 10));
 
+    var responseString = await response.stream.bytesToString();
     print(response.stream.toString());
     if (response.statusCode == 200) {
-      setState(() {
-        showspinner = false;
-      });
-      print('Shop Detail Uploaded Successfully');
-      // Utility().myfluttertoast(value['msg']);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeView()));
-      Utility().myfluttertoast("Shop Detail Uploaded Successfully");
+      final decodedMap = json.decode(responseString);
+      if (decodedMap['status'] == "true") {
+        print(decodedMap['data']);
+        controller.saveusertoken(decodedMap['data']);
+
+        print('Shop Detail Uploaded Successfully');
+        // Utility().myfluttertoast(value['msg']);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeView()));
+        Utility().myfluttertoast("Shop Detail Uploaded Successfully");
+        setState(() {
+          showspinner = false;
+        });
+      }else{
+        setState(() {
+          showspinner = false;
+        });
+      }
+
+
     } else {
       setState(() {
         showspinner = false;
@@ -1523,6 +1562,9 @@ class _MyHomePageState extends State<MyHomePage> {
       print('failed');
       Utility().myfluttertoast("Some thing wrong data");
     }
+
+    print("ids${id.toString()}:Comapany_Name:${controller.companyname.text.toString()} :company_pan_no:${controller.companypannumber.text.toString()}:gst_number:${controller.companygstnumber.text.toString()}:fssai_number:${controller.companyfssainumber.text.toString()}:fssai_date:${fssaivaliditydate.toString()}:whatsapp${controller.companywhatsappnumber.text.toString()} :brand_name:${controller.companybrandname.text.toString()}:bussiness_address_1:${controller.companyaddress.text.toString()}:bussiness_address_2:${controller.companyaddress2.text.toString()}:state:${stateid.toString()} :city${Cityid.toString()}:district${Districtid.toString()}:pin_code:${controller.companypincode.text.toString()}: id:${id.toString()}: company_pan_image:${companypanphoto!.path}:gst_image:${companyfssaicertificate!.path}: fssai_image:${companyfssaicertificate!.path} :company_logo:${companybrandlogo!.path}");
+
   }
 
   Future getcompanypanphoto() async {

@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:get/get.dart';
+
 import 'package:homlisellerapp/app/constants/fonts.dart';
 import 'package:homlisellerapp/app/routes/RoutesName.dart';
 import 'package:homlisellerapp/app/shared/utility.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../View_Model/personaldetails_controller.dart';
 import '../constants/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,7 @@ import '../constants/colors.dart';
 import '../shared/color.dart';
 import '../shared/validator.dart';
 import 'AllScreen.dart';
+import 'package:http_parser/http_parser.dart';
 import 'ShopDetails.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'datepicker.dart';
@@ -25,6 +27,7 @@ import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'home_view.dart';
+import 'package:dio/dio.dart';
 
 
 
@@ -59,7 +62,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  PersonalDetailscontroller controller = PersonalDetailscontroller();
+  // PersonalDetailscontroller controller =Get.put(PersonalDetailscontroller());
+  final GlobalKey<FormState> personaldetailsKey = GlobalKey<FormState>();
+  TextEditingController pancardnumber = TextEditingController();
+  TextEditingController addharcardnumber = TextEditingController();
 
   static const String _title = 'Radio Button Example';
   String? dateofbirth;
@@ -68,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   File? addharcardfrontback;
   File? addharcardfronimg;
   File? pancimage;
-
+  String? addharnumbers;
   String? birthDateInString;
   DateTime? birthDate;
   bool showspinner = false;
@@ -86,7 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var firstaddharcardfrourcharacter,secondaddharcardfrourcharacter,thridaddharcardfrourcharacter;
 
+
+
   Widget build(BuildContext context) {
+    var personaldetailsprovider = Provider.of<PersonalDetailscontroller>(context);
     return ModalProgressHUD(
       inAsyncCall: showspinner,
       child: Scaffold(
@@ -97,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               // height: Get.height * 0.1130,
               child: Form(
-                key: controller.personaldetailsKey,
+                key:personaldetailsKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -276,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: TextFormField(
                           // validator: Validator.validatePancard,
                           validator: Validator.validatePancarddata,
-                          controller: controller.pancardnumber,
+                          controller:pancardnumber,
 
                           decoration: InputDecoration(
                             hintMaxLines: 10,
@@ -640,13 +649,63 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     InkWell(
                       onTap: () async {
-                        if (controller.personaldetailsKey.currentState!
-                            .validate()) {
+                        if (personaldetailsKey.currentState!.validate()) {
+                          // setState(() {
+                          //   showspinner = true;
+                          // });
+                          //another way api integrete
+/*
+                          SharedPreferences userpref = await SharedPreferences.getInstance();
+                          setState(() {
+                            id = userpref.getString('id') ?? '';
+                          });
+
+                          print("ids${id.toString()}");
+
+
+                          addharnumbers="${firstaddharcardfrourcharacter} ${secondaddharcardfrourcharacter} ${thridaddharcardfrourcharacter}";
+                          print("Addhar NUmbers"+addharnumbers.toString());
                           try {
-                            uploadpersonaldetails();
+                            FormData data = FormData.fromMap({
+                              "gender": gender.toString(),
+                              "dob": dateofbirth.toString(),
+                              "pan_no": pancardnumber.text.toString(),
+                              "aadhar_no":addharnumbers.toString(),
+                              "id": id.toString(),
+                              "pan_image": await MultipartFile.fromFile(pancimage!.path,
+                                  filename: pancimage!.path,
+                                  contentType: MediaType(
+                                    'image',
+                                    'jpeg',
+                                  )),
+                              "aadhar_front_image": await MultipartFile.fromFile(addharcardfrontback!.path,
+                                  filename: addharcardfrontback!.path,
+                                  contentType: MediaType(
+                                    'image',
+                                    'jpeg',
+                                  )),
+                              "aadhar_back_image": await MultipartFile.fromFile(addharcardfrontback!.path,
+                                  filename: addharcardfrontback!.path,
+                                  contentType: MediaType(
+                                    'image',
+                                    'jpeg',
+                                  )),
+                            });
+                            print("Personal parama:${data}");
+
+                            personaldetailsprovider.Personaldata(context, data);
+
+
                           } catch (e) {
                             print(e.toString());
                           }
+
+ */
+                        try{
+                          uploadpersonaldetails();
+                        }catch(e){
+                          print(e.toString());
+                        }
                         } else {
                           // Utility().myfluttertoast("Enter the Valid Data");
                         }
@@ -681,7 +740,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> uploadpersonaldetails() async {
-
+    setState(() {
+      showspinner = true;
+    });
 
     SharedPreferences userpref = await SharedPreferences.getInstance();
     setState(() {
@@ -694,31 +755,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var request = new http.MultipartRequest('POST', uri);
 
-     String addharnumbers="${firstaddharcardfrourcharacter} ${secondaddharcardfrourcharacter} ${thridaddharcardfrourcharacter}";
+      addharnumbers="${firstaddharcardfrourcharacter} ${secondaddharcardfrourcharacter} ${thridaddharcardfrourcharacter}";
      print("Addhar NUmbers"+addharnumbers.toString());
-     if(addharnumbers==""){
-       Utility().myfluttertoast("Addhar Number is Empty");
-     }else if(addharnumbers==null){
-       Utility().myfluttertoast("Addhar Number is Empty");
-     }else if(gender.toString()==""){
-       Utility().myfluttertoast("Select The Gender");
-     }else if(dateofbirth.toString()==""){
-       Utility().myfluttertoast("Select The Date of Birth");
-     }else if(pancimage!.path==""){
-       Utility().myfluttertoast("Upload Personal Pan Card");
-     }else if(addharcardfrontback!.path==""){
-       Utility().myfluttertoast("Upload Personal Addhar Card");
-     }else if(addharcardfrontback!.path==""){
-       Utility().myfluttertoast("Upload Personal back Addhar Card");
-     }else{
-       setState(() {
-         showspinner = true;
-       });
-       print("Gender:${gender.toString()}:dob:${dateofbirth.toString()}: pan_no:${controller.pancardnumber.text.toString()}: Addhar Number:${addharnumbers.toString()}: Id:${id}: PanImage:${pancimage!.path}: Addhar Front:${addharcardfrontback!.path}:Addhar Back:${addharcardfrontback!.path}");
+
+       print("Gender:${gender.toString()}:dob:${dateofbirth.toString()}: pan_no:${pancardnumber.text.toString()}: Addhar Number:${addharnumbers.toString()}: Id:${id}: PanImage:${pancimage!.path}: Addhar Front:${addharcardfrontback!.path}:Addhar Back:${addharcardfrontback!.path}");
        print("Gender:${gender.toString()}");
        request.fields['gender'] = gender.toString();
        request.fields['dob'] = dateofbirth.toString();
-       request.fields['pan_no'] = controller.pancardnumber.text.toString();
+       request.fields['pan_no'] =pancardnumber.text.toString();
        request.fields['aadhar_no'] =addharnumbers.toString();
        request.fields['id'] = id.toString();
        var pancardimage =
@@ -736,23 +780,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
        print("All parametres" + request.toString());
 
-       var response = await request.send();
-       print("All parametresS" + request.toString());
-       print(response.toString());
+       var response = await request.send().timeout(Duration(seconds: 10));
 
        var responseString = await response.stream.bytesToString();
 
        print(response.stream.toString());
        if (response.statusCode == 200) {
+         print("this working 200");
          final decodedMap = json.decode(responseString);
          if (decodedMap['status'] == "true") {
-           // print("" + decodedMap['msg']);
-           Navigator.push(
-               context, MaterialPageRoute(builder: (context) => ShopDetails()));
+           print("" + decodedMap['msg']);
+           // Navigator.push(
+           //     context, MaterialPageRoute(builder: (context) => ShopDetails()));
            Utility().myfluttertoast("Personal Detail Uploaded Successfully");
-           setState(() {
-             showspinner = false;
-           });
+           // setState(() {
+           //   showspinner = false;
+           // });
          } else {
            Utility().myfluttertoast("Please enter the Right details");
            print("Please enter the Right details");
@@ -760,18 +803,16 @@ class _MyHomePageState extends State<MyHomePage> {
              showspinner = false;
            });
          }
-       } else {
-
+       }else if(response.statusCode == 422){
+         print("422 Response");
          setState(() {
            showspinner = false;
          });
-         print('failed');
-         Utility().myfluttertoast("Please enter the Right details");
        }
-     }
 
 
   }
+
 
   Future getpancardphoto() async {
     final pickfile = await pickImage.pickImage(source: ImageSource.gallery);

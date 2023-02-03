@@ -6,6 +6,9 @@ class Apiurl {
   static const String sellerloginotp = Baseurl + "seller-login-otp";
   static const String Personaldataurl = Baseurl + "seller-personal";
   static const String Companydataurl = Baseurl + "seller-company";
+  static const String addproductCateogyurl = Baseurl + "get-main-category";
+  static const String addproductSubCategoryurl = Baseurl + "get-parent-category";
+  static const String addproductSubSubCategoryurl = Baseurl + "get-parent-category-without-attributes";
 
   // _timervisible = true;
 }

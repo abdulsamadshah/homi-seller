@@ -3,58 +3,34 @@ import 'package:get/get.dart';
 import 'package:homlisellerapp/app/routes/RoutesName.dart';
 
 import 'package:homlisellerapp/app/shared/color.dart';
+import 'package:provider/provider.dart';
 
+import 'app/View_Model/personaldetails_controller.dart';
 import 'app/routes/Routes.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
-  runApp(
-    GetMaterialApp(
-        // home: const SignUpView(),
-        
-        debugShowCheckedModeBanner: false,
-        title: "homlisellerapp",
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PersonalDetailscontroller()),
+
+      ],
+      child: MaterialApp(
+        title: 'Homi Seller',
+        theme: ThemeData(
+          primarySwatch: Colors.deepPurple,
+        ),
         initialRoute: RoutesName.Login,
         onGenerateRoute: Routes.getroutes,
-
-        
-
-        theme: ThemeData(
-            fontFamily: 'poppins',
-            colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.blue,
-            ),
-            appBarTheme:
-                AppBarTheme(backgroundColor: FixedColors.blue, elevation: 0),
-            textTheme: const TextTheme(button: TextStyle(color: Colors.white)),
-            iconTheme: const IconThemeData(color: Colors.blue),
-            textButtonTheme: TextButtonThemeData(
-                style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            )),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-                style: ButtonStyle(
-                    side: MaterialStateProperty.all(BorderSide(
-                      color: Colors.blue[300]!,
-                    )),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Colors.blue[300]!,
-                        ),
-                        borderRadius: BorderRadius.circular(10))))),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-                style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0),
-                    textStyle: MaterialStateProperty.all(
-                        const TextStyle(fontSize: 16)),
-                    fixedSize: MaterialStateProperty.all(Size(Get.width, 50)),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    shadowColor:
-                        MaterialStateProperty.all<Color>(Colors.blue))))),
-
-  );
+      ),
+    );
+  }
 }

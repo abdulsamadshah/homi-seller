@@ -5,4 +5,6 @@ class RoutesName{
   static const String PersonalDetails="PersonalDetails";
   static const String ShopDetails="ShopDetails";
   static const String SalesReport="SalesReport";
+  static const String AddKhanaFormOneView="AddKhanaFormOneView";
+  static const String KhanaFoodOneView="KhanaFoodOneView";
 }

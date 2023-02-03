@@ -50,7 +50,6 @@ class RegistrationController extends GetxController {
     sp.setString("phone_otp", phoneotp);
     sp.setString("id", id);
 
-    update();
     return true;
   }
 

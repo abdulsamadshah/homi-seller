@@ -143,7 +143,7 @@ class Validator {
     }else if(value.length > 10){
       return "Please enter the 10 digit number";
     }else if(value.length < 10){
-      return "Please enter the 14 digit number";
+      return "Please enter the 10 digit number";
     }else if(value.contains(' ')){
       return 'Pancard Number should not contain space';
     }else {

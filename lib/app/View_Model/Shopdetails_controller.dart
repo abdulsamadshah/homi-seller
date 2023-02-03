@@ -52,6 +52,15 @@ class ShopdetailsController extends GetxController{
     companypincode.dispose();
   }
 
+
+  Future<bool> saveusertoken(String token) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setString("token", token);
+
+
+    return true;
+  }
+
   Registerrepo repo = Registerrepo();
 
   Future<void> sellerShopdetail(BuildContext context, dynamic data) async {
